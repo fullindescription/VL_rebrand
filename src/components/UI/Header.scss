@@ -1,0 +1,41 @@
+.header {
+  position: fixed;
+  top: 15px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  z-index: 1000;
+  background: linear-gradient(to right, #ff6f61, #f0ff88);
+  border-radius: 10px;
+
+  &__title-container {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 15px;
+    color: white;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+
+  &__nav {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+
+    ul {
+      display: flex;
+      gap: 15px;
+      list-style: none;
+    }
+
+    li {
+      list-style: none;
+    }
+  }
+}

@@ -1,16 +1,19 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './styles/pages/App.css'
+import React from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+import Header from './components/UI/Header';
+import MovieCarousel from './components/MovieCarousel/MovieCarousel';
+import {MovieList} from './components/MovieList/MovieList';
+import Footer from './components/UI/Footer';
 
-  return (
-    <>
+const App: React.FC = () => {
+    return (
+        <div className="App">
+            <Header title="VL.RU" />
+            <MovieCarousel />
+            <MovieList />
+            <Footer />
+        </div>
+    );
+};
 
-    </>
-  )
-}
-
-export default App
+export default App;
