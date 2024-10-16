@@ -5,6 +5,7 @@ class Movie(models.Model):
     description = models.TextField()
     duration = models.PositiveIntegerField()
     category = models.ForeignKey('MovieCategory', on_delete=models.SET_NULL, null=True, blank=True)
+    age_restriction = models.CharField(max_length=5, default="6+")
     image_url = models.TextField(blank=True, null=True)
     video_url = models.TextField(blank=True, null=True)
     def __str__(self):
@@ -41,6 +42,7 @@ class Event(models.Model):
     description = models.TextField()
     date = models.DateTimeField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    age_restriction = models.CharField(max_length=5, default="6+")
     available_tickets = models.PositiveIntegerField()
     category = models.ForeignKey(EventCategory, on_delete=models.SET_NULL, null=True, blank=True)
     image_url = models.TextField(blank=True, null=True)
