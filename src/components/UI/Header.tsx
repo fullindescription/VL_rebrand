@@ -1,4 +1,6 @@
+
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Header.scss';
 
 type HeaderProps = {
@@ -9,7 +11,9 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
     return (
         <header className="header">
             <div className="header__title-container">
-                <h1 className="header__title">{title}</h1>
+                <Link to="/" className="header__title-link">
+                    <h1 className="header__title">{title}</h1>
+                </Link>
             </div>
             <nav className="header__nav">
                 <ul>
@@ -22,6 +26,9 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                     <li>Календарь</li>
                 </ul>
             </nav>
+            <div className="header__auth-buttons">
+                <Link to="/login" className="header__login-button">Вход</Link>
+            </div>
         </header>
     );
 };

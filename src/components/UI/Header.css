@@ -35,5 +35,30 @@
 .header__nav li {
   list-style: none;
 }
+.header__auth-buttons {
+  position: absolute;
+  right: 150px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 20px;
+}
+.header__login-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  text-decoration: none;
+}
+.header__login-button:hover {
+  background-color: #388e3c;
+}
+.header .header__title-link {
+  text-decoration: none;
+  color: inherit;
+}
 
 /*# sourceMappingURL=Header.css.map */
