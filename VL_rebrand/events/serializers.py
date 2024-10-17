@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from .models import Movie, MovieCategory, MovieSession, Event, EventCategory, Cart, CartItem, Order, Ticket
 
@@ -49,13 +50,63 @@ class CartSerializer(serializers.ModelSerializer):
         fields = ['id', 'user']
 
 
+
+
+
+
 class CartItemSerializer(serializers.ModelSerializer):
-    event = EventSerializer(required=False, allow_null=True)
-    movie_session = MovieSessionSerializer(required=False, allow_null=True)
+    event_id = serializers.IntegerField(write_only=True, required=False)
+    movie_session_id = serializers.IntegerField(write_only=True, required=False)
+
+    event = EventSerializer(read_only=True)
+    movie_session = MovieSessionSerializer(read_only=True)
 
     class Meta:
         model = CartItem
-        fields = ['id', 'cart', 'event', 'movie_session', 'quantity']
+        fields = ['id', 'cart', 'event', 'event_id', 'movie_session', 'movie_session_id', 'quantity']
+
+    def validate(self, data):
+        """
+        Проверяем, чтобы был указан либо `event_id`, либо `movie_session_id`, но не оба сразу.
+        """
+        event_id = data.get('event_id')
+        movie_session_id = data.get('movie_session_id')
+
+        if not event_id and not movie_session_id:
+            raise serializers.ValidationError("Either event_id or movie_session_id is required.")
+        if event_id and movie_session_id:
+            raise serializers.ValidationError("Only one of event_id or movie_session_id should be provided.")
+
+        return data
+
+    def create(self, validated_data):
+        """
+        Переопределяем метод create для обработки добавления или обновления элементов в корзине.
+        """
+        event_id = validated_data.pop('event_id', None)
+        movie_session_id = validated_data.pop('movie_session_id', None)
+        cart = self.context['cart']  # Получаем корзину из контекста
+
+        if event_id:
+            event = get_object_or_404(Event, id=event_id)
+            cart_item, created = CartItem.objects.get_or_create(cart=cart, event=event)
+        elif movie_session_id:
+            movie_session = get_object_or_404(MovieSession, id=movie_session_id)
+            cart_item, created = CartItem.objects.get_or_create(cart=cart, movie_session=movie_session)
+
+        # Обновляем количество, если элемент уже существует
+        cart_item.quantity = validated_data.get('quantity', 1)
+        cart_item.save()
+
+        return cart_item
+
+    def update(self, instance, validated_data):
+        """
+        Переопределяем метод update для обновления существующего элемента корзины.
+        """
+        instance.quantity = validated_data.get('quantity', instance.quantity)
+        instance.save()
+        return instance
 
 
 class OrderSerializer(serializers.ModelSerializer):

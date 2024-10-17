@@ -1,9 +1,14 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+
 from .models import Movie, MovieSession
 from .serializers import MovieSerializer, MovieSessionSerializer
 from datetime import datetime
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Cart
+from .serializers import CartItemSerializer
+from django.core.exceptions import ObjectDoesNotExist
 
 
 @api_view(['GET'])
@@ -76,3 +81,24 @@ def get_films_for_day(request):
         })
 
     return Response(response_data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_or_update_cart_item(request):
+    try:
+        user = request.user
+        cart, _ = Cart.objects.get_or_create(user=user)
+
+        request.data['cart'] = cart.id
+
+        serializer = CartItemSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    except ObjectDoesNotExist as e:
+        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": "An unexpected error occurred: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
