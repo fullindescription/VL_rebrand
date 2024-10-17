@@ -4,16 +4,15 @@ from .serializers import MovieSerializer, MovieSessionSerializer, EventSerialize
 from datetime import datetime
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
-
+from .models import Event
+from .serializers import EventSerializer
 from datetime import datetime, timedelta
+from django.core.cache import cache
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Event
-from .serializers import EventSerializer
-
+from .models import Movie, MovieSession
+from .serializers import MovieSerializer, MovieSessionSerializer
 
 @api_view(['GET'])
 def get_film_by_name(request):
@@ -54,6 +53,16 @@ def get_films_for_day(request):
     except ValueError:
         return Response({"error": "Invalid date format. Please use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
+    # Формируем ключ для кеша
+    cache_key = f"films_for_day_{date}"
+    if time:
+        cache_key += f"_{time}"
+
+    # Проверяем, есть ли данные в кеше
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        return Response(cached_response, status=status.HTTP_200_OK)
+
     if time:
         try:
             time_obj = datetime.strptime(time, '%H:%M').time()
@@ -62,6 +71,7 @@ def get_films_for_day(request):
     else:
         time_obj = None
 
+    # Фильтрация сеансов
     if time_obj:
         sessions = MovieSession.objects.filter(date=date_obj, time__gt=time_obj)
     else:
@@ -83,6 +93,9 @@ def get_films_for_day(request):
             "movie": movie_serializer.data,
             "sessions": session_serializer.data
         })
+
+    # Сохраняем данные в кеш на 15 минут
+    cache.set(cache_key, response_data, 60 * 15)
 
     return Response(response_data, status=status.HTTP_200_OK)
 
