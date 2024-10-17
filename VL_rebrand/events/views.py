@@ -1,4 +1,4 @@
-
+from django.shortcuts import get_object_or_404
 from .models import Movie, MovieSession
 from .serializers import MovieSerializer, MovieSessionSerializer
 from datetime import datetime
@@ -6,10 +6,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Cart
+from .models import Cart, CartItem
 from .serializers import CartItemSerializer
-from django.core.exceptions import ObjectDoesNotExist
-
 
 @api_view(['GET'])
 def get_film_by_name(request):
@@ -101,6 +99,45 @@ def add_or_update_cart_item(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response({"error": "An unexpected error occurred: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_cart(request):
+    try:
+        user = request.user
+        cart = Cart.objects.filter(user=user).first()
+
+        if not cart:
+            return Response({"message": "Cart is empty."}, status=status.HTTP_200_OK)
+
+        # Получаем все элементы корзины для текущего пользователя
+        cart_items = CartItem.objects.filter(cart=cart)
+        serializer = CartItemSerializer(cart_items, many=True)
+
+        return Response({"cart_items": serializer.data}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": "An unexpected error occurred: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def remove_cart_item(request, item_id):
+    try:
+        user = request.user
+        cart = Cart.objects.filter(user=user).first()
+
+        if not cart:
+            return Response({"error": "Cart not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Проверяем, что элемент корзины принадлежит этому пользователю
+        cart_item = get_object_or_404(CartItem, cart=cart, id=item_id)
+        cart_item.delete()
+
+        return Response({"message": "Item removed from cart."}, status=status.HTTP_204_NO_CONTENT)
 
     except Exception as e:
         return Response({"error": "An unexpected error occurred: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
