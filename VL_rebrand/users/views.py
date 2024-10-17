@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from users.models import User
 from .serializers import UserDetailSerializer
+from events.models import Cart
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -24,10 +25,12 @@ def user_registration(request):
             last_name=serializer.validated_data['last_name'],
             password=request.data['password']
         )
+
+        Cart.objects.create(user=user)
+
         return Response(
             {"message": "User registered successfully", "user": UserDetailSerializer(user).data},
             status=status.HTTP_201_CREATED
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 

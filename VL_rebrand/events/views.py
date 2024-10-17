@@ -35,6 +35,7 @@ def get_film_by_name(request):
 @api_view(['GET'])
 def get_films_for_day(request):
     date = request.GET.get('date', None)
+    time = request.GET.get('time', None)
 
     if not date:
         return Response({"error": "Please provide a date in the format YYYY-MM-DD"}, status=status.HTTP_400_BAD_REQUEST)
@@ -44,10 +45,21 @@ def get_films_for_day(request):
     except ValueError:
         return Response({"error": "Invalid date format. Please use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
-    sessions = MovieSession.objects.filter(date=date_obj)
+    if time:
+        try:
+            time_obj = datetime.strptime(time, '%H:%M').time()
+        except ValueError:
+            return Response({"error": "Invalid time format. Please use HH:MM."}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        time_obj = None
+
+    if time_obj:
+        sessions = MovieSession.objects.filter(date=date_obj, time__gt=time_obj)
+    else:
+        sessions = MovieSession.objects.filter(date=date_obj)
 
     if not sessions.exists():
-        return Response({"message": "No sessions found for this date."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "No sessions found for this date and time."}, status=status.HTTP_404_NOT_FOUND)
 
     movie_ids = sessions.values_list('movie_id', flat=True).distinct()
     movies = Movie.objects.filter(id__in=movie_ids)
@@ -56,11 +68,8 @@ def get_films_for_day(request):
 
     for movie in movies:
         movie_sessions = sessions.filter(movie=movie)
-
         movie_serializer = MovieSerializer(movie)
-
         session_serializer = MovieSessionSerializer(movie_sessions, many=True)
-
         response_data.append({
             "movie": movie_serializer.data,
             "sessions": session_serializer.data
