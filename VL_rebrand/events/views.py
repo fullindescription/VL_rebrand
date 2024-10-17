@@ -89,16 +89,18 @@ def add_or_update_cart_item(request):
         user = request.user
         cart, _ = Cart.objects.get_or_create(user=user)
 
-        request.data['cart'] = cart.id
+        # Создаем изменяемую копию request.data
+        data = request.data.copy()
+        # Добавляем cart в данные запроса
+        data['cart'] = cart.id
 
-        serializer = CartItemSerializer(data=request.data)
+        # Передаем измененные данные в сериализатор
+        serializer = CartItemSerializer(data=data, context={'cart': cart})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    except ObjectDoesNotExist as e:
-        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"error": "An unexpected error occurred: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
