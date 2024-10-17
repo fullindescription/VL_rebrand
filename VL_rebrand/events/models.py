@@ -58,7 +58,7 @@ class CartItem(models.Model):
     cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
     event = models.ForeignKey('Event', on_delete=models.CASCADE, null=True, blank=True)
     movie_session = models.ForeignKey(MovieSession, on_delete=models.CASCADE, null=True, blank=True)
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self):
         if self.event:
