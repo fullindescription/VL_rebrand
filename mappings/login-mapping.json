@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/users/login/"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"message\": \"Login successful\", \"access\": \"hfuisdjkdsfuijklks;dffsdijkldsidfsjkl\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

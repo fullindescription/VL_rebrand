@@ -1,48 +1,13 @@
-.movie-carousel {
-  position: relative;
-  margin: 100px 0;
-
-  &__image {
-    width: 100%;
-    height: 350px;
-    margin: 0 auto;
-    background-color: #f48fb1;
-    background-size: cover;
-    background-position: center;
-    border-radius: 20px;
-  }
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-  color: #fff;
-  background: #000000;
+.carousel-indicators [data-bs-target] {
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  font-size: 20px;
-  width: 60px;
-  height: 60px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transition: background 0.3s ease, transform 0.3s ease;
-
-  &:hover {
-    background: #482323;
-    transform: scale(1.1);
-  }
+  background-color: rgba(255, 255, 255, 0.5);
+  margin: 0 5px;
 }
 
-.custom-bullet {
-  width: 16px;
-  height: 16px;
-  opacity: 1;
-  transition: transform 0.3s ease;
-
-  &-active {
-    background-color: #ff6f61;
-    opacity: 1;
-    transform: scale(1.0);
-  }
+.carousel-indicators .active {
+  background-color: rgba(255, 255, 255, 1);
+  width: 14px;
+  height: 14px;
 }

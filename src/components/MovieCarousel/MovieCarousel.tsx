@@ -1,31 +1,46 @@
 import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, FreeMode, Autoplay } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import './MovieCarousel.scss';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';  // Не забудьте подключить JS для работы карусели
+import './MovieCarousel.css';  // Добавляем файл стилей для кастомизации индикаторов
 
 const MovieCarousel: React.FC = () => {
     return (
-        <section className="movie-carousel">
-            <Swiper
-                modules={[Navigation, Pagination, FreeMode, Autoplay]}
-                spaceBetween={10}
-                slidesPerView={1} centeredSlides={true}
-                navigation
-                pagination={{ clickable: true, bulletClass: 'swiper-pagination-bullet custom-bullet' }}
-                loop={true}
-                autoplay={{ delay: 5000, disableOnInteraction: false }}
-            >
-                <SwiperSlide>
-                    <div className="movie-carousel__image" style={{ backgroundImage: 'url(/images/1.jpg)' }}></div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="movie-carousel__image" style={{ backgroundImage: 'url(/images/2.jpg)' }}></div>
-                </SwiperSlide>
-            </Swiper>
-        </section>
+        <div className="container-fluid p-0">
+            <div id="carouselExampleIndicators" className="carousel slide" data-bs-ride="carousel">
+                <div className="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
+                            className="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                            aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                            aria-label="Slide 3"></button>
+                </div>
+                <div className="carousel-inner">
+                    <div className="carousel-item active">
+                        <img src="/images/1.jpg" className="d-block w-100 img-fluid rounded"
+                             style={{height: '400px', objectFit: 'cover'}} alt="Первый слайд"/>
+                    </div>
+                    <div className="carousel-item">
+                        <img src="/images/1.jpg" className="d-block w-100 img-fluid rounded"
+                             style={{height: '400px', objectFit: 'cover'}} alt="Первый слайд"/>
+                    </div>
+                    <div className="carousel-item">
+                        <img src="/images/1.jpg" className="d-block w-100 img-fluid rounded"
+                             style={{height: '400px', objectFit: 'cover'}} alt="Первый слайд"/>
+                    </div>
+                </div>
+                <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                        data-bs-slide="prev">
+                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span className="visually-hidden">Previous</span>
+                </button>
+                <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                        data-bs-slide="next">
+                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span className="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
     );
 };
 
