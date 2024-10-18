@@ -67,7 +67,7 @@ class MovieService:
             return {"message": "Data retrieved from cache.", "data": cached_response}
 
         try:
-            date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+            date_obj = datetime.strptime(date, '%Y-%m-%d').timestamp()
         except ValueError:
             raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
 
