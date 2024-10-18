@@ -67,11 +67,11 @@ class MovieService:
             return {"message": "Data retrieved from cache.", "data": cached_response}
 
         try:
-            date_obj = datetime.strptime(date, '%Y-%m-%d').timestamp()
+            date_obj = datetime.strptime(date, '%Y-%m-%d').date()
         except ValueError:
             raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
 
-        sessions = MovieSessionRepository.get_sessions_for_day(date_obj, time)
+        sessions = MovieSessionRepository.get_sessions_for_day(datetime(date_obj).timestamp(), time)
         movie_ids = sessions.values_list('movie_id', flat=True).distinct()
         movies = MovieRepository.get_movies_by_ids(movie_ids)
 
