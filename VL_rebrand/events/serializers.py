@@ -51,9 +51,6 @@ class CartSerializer(serializers.ModelSerializer):
 
 
 
-
-
-
 class CartItemSerializer(serializers.ModelSerializer):
     event_id = serializers.IntegerField(write_only=True, required=False)
     movie_session_id = serializers.IntegerField(write_only=True, required=False)
@@ -66,9 +63,7 @@ class CartItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'cart', 'event', 'event_id', 'movie_session', 'movie_session_id', 'quantity']
 
     def validate(self, data):
-        """
-        Проверяем, чтобы был указан либо `event_id`, либо `movie_session_id`, но не оба сразу.
-        """
+
         event_id = data.get('event_id')
         movie_session_id = data.get('movie_session_id')
 
