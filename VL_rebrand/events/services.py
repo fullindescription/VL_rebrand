@@ -193,4 +193,3 @@ class TicketService:
             ticket_number=ticket_number
         )
         return {"message": "Ticket created", "ticket": TicketSerializer(ticket).data}
-s
