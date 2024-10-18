@@ -1,8 +1,11 @@
-from django.shortcuts import get_object_or_404
-from .models import Movie, MovieSession, Event, Cart, CartItem, Order, Ticket
-from datetime import datetime, timedelta
+from .repositories import EventRepository, MovieRepository, MovieSessionRepository
 from django.core.cache import cache
-from .serializers import MovieSerializer, MovieSessionSerializer, EventSerializer, CartItemSerializer, OrderSerializer, TicketSerializer
+from datetime import datetime, timedelta
+from .serializers import MovieSerializer, MovieSessionSerializer, EventSerializer
+from django.shortcuts import get_object_or_404
+from .models import Cart, CartItem, Order, Ticket
+from .serializers import CartItemSerializer, OrderSerializer, TicketSerializer
+
 
 class MovieService:
     @staticmethod
@@ -13,11 +16,12 @@ class MovieService:
         if cached_response:
             return {"message": "Data retrieved from cache.", "data": cached_response}
 
-        # Получаем фильм и его сеансы
-        movie = get_object_or_404(Movie, title__iexact=title)
-        sessions = MovieSession.objects.filter(movie_id=movie.id)
+        movie = MovieRepository.get_movie_by_title(title)
+        if not movie:
+            raise ValueError("Movie not found")
 
-        # Сериализуем данные
+        sessions = MovieSessionRepository.get_sessions_for_movie(movie.id)
+
         movie_serializer = MovieSerializer(movie)
         session_serializer = MovieSessionSerializer(sessions, many=True)
 
@@ -26,7 +30,6 @@ class MovieService:
             "sessions": session_serializer.data
         }
 
-        # Кэшируем данные
         cache.set(cache_key, response_data, 60 * 15)
         return response_data
 
@@ -40,25 +43,15 @@ class MovieService:
         if cached_response:
             return {"message": "Data retrieved from cache.", "data": cached_response}
 
-        # Преобразуем строку даты
         try:
             date_obj = datetime.strptime(date, '%Y-%m-%d').date()
         except ValueError:
             raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
 
-        # Фильтрация сеансов по дате и времени
-        if time:
-            try:
-                time_obj = datetime.strptime(time, '%H:%M').time()
-            except ValueError:
-                raise ValueError("Invalid time format. Please use HH:MM.")
-            sessions = MovieSession.objects.filter(date=date_obj, time__gt=time_obj)
-        else:
-            sessions = MovieSession.objects.filter(date=date_obj)
+        sessions = MovieSessionRepository.get_sessions_for_day(date_obj, time)
 
-        # Сериализуем фильмы и сеансы
         movie_ids = sessions.values_list('movie_id', flat=True).distinct()
-        movies = Movie.objects.filter(id__in=movie_ids)
+        movies = MovieRepository.get_movies_by_ids(movie_ids)
 
         response_data = []
         for movie in movies:
@@ -70,7 +63,6 @@ class MovieService:
                 "sessions": session_serializer.data
             })
 
-        # Кэшируем результат
         cache.set(cache_key, response_data, 60 * 15)
         return response_data
 
@@ -84,13 +76,13 @@ class EventService:
         if cached_response:
             return {"message": "Data retrieved from cache.", "data": cached_response}
 
-        event = get_object_or_404(Event, name__iexact=name)
+        event = EventRepository.get_event_by_name(name)
+        if not event:
+            raise ValueError("Event not found")
 
-        # Сериализуем данные
         event_serializer = EventSerializer(event)
-
-        # Кэшируем результат
         response_data = {"event": event_serializer.data}
+
         cache.set(cache_key, response_data, 60 * 15)
         return response_data
 
@@ -107,23 +99,18 @@ class EventService:
         except ValueError:
             raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
 
-        # Получаем события в пределах одного дня
         start_of_day = date_obj
         end_of_day = date_obj + timedelta(days=1)
 
-        events = Event.objects.filter(date__gte=start_of_day, date__lt=end_of_day)
+        events = EventRepository.get_events_for_day(start_of_day, end_of_day)
 
         if not events.exists():
             return {"message": "No events found for this date."}
 
-        # Сериализуем данные
         event_serializer = EventSerializer(events, many=True)
 
-        response_data = event_serializer.data
-
-        # Кэшируем результат
-        cache.set(cache_key, response_data, 60 * 15)
-        return response_data
+        cache.set(cache_key, event_serializer.data, 60 * 15)
+        return event_serializer.data
 
 
 class CartService:
