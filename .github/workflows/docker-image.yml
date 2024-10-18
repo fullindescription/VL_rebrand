@@ -22,5 +22,4 @@ jobs:
     - name: Build the hello-docker Docker image
       run: |
             docker build . --file Dockerfile --tag ghcr.io/marsvest/vl_backend:latest
-            docker run ghcr.io/marsvest/vl_backend:latest
             docker push ghcr.io/marsvest/vl_backend:latest
