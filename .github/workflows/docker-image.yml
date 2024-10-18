@@ -19,9 +19,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build the hello-docker Docker image
+      - name: Build and Push the Docker image
         run: |
-                docker build . --tag ghcr.io/marsvest/vl_backend:latest
+                docker build . --file Dockerfile --tag ghcr.io/marsvest/vl_backend:latest
                 docker push ghcr.io/marsvest/vl_backend:latest
 
 
