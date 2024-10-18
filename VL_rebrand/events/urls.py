@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import get_film_by_name, get_films_for_day, add_or_update_cart_item, get_cart, remove_cart_item, get_event_by_name, get_events_for_day
+from .views import get_film_by_name, get_films_for_day, add_or_update_cart_item, \
+    get_cart, remove_cart_item, get_event_by_name, get_events_for_day
 
 urlpatterns = [
     path('getfilmbyname/', get_film_by_name, name='get_film_by_name'),
