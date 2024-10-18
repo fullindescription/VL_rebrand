@@ -83,6 +83,34 @@ const Header: React.FC<HeaderProps> = ({ title, username, setUsername, selectedD
                     </nav>
 
                     <div className="d-flex align-items-center">
+                        <div className="dropdown me-3">
+                            <button className="btn btn-outline text-white dropdown-toggle" type="button"
+                                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                Меню
+                            </button>
+                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><Link className="dropdown-item" to="#">Сегодня</Link></li>
+                                <li><Link className="dropdown-item" to="#">Завтра</Link></li>
+                                <li><Link className="dropdown-item" to="#">Премьера</Link></li>
+                                <li><Link className="dropdown-item" to="#">Афиша</Link></li>
+                                <li><Link className="dropdown-item" to="#">Фильмы</Link></li>
+                                <li>
+                                    <button
+                                        className="dropdown-item"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            toggleCalendar();
+                                        }}>
+                                        Календарь
+                                    </button>
+                                </li>
+                                <li>
+                                    <hr className="dropdown-divider"/>
+                                </li>
+                                <li><Link className="dropdown-item" to="#">Помощь</Link></li>
+                                <li><Link className="dropdown-item" to="#">Реклама</Link></li>
+                            </ul>
+                        </div>
                         {username ? (
                             <div className="d-flex align-items-center">
                                 <Link to="/profile" className="btn btn-outline-light d-flex align-items-center me-3">
