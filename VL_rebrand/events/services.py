@@ -71,7 +71,7 @@ class MovieService:
         except ValueError:
             raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
 
-        sessions = MovieSessionRepository.get_sessions_for_day(datetime(date_obj).timestamp(), time)
+        sessions = MovieSessionRepository.get_sessions_for_day(date_obj, time)
         movie_ids = sessions.values_list('movie_id', flat=True).distinct()
         movies = MovieRepository.get_movies_by_ids(movie_ids)
 
