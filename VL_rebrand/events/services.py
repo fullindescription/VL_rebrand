@@ -1,23 +1,50 @@
-from django.shortcuts import get_object_or_404
-from .models import Movie, MovieSession, Event, Cart, CartItem, Order, Ticket
-from datetime import datetime, timedelta
+from .repositories import EventRepository, MovieRepository, MovieSessionRepository, CartRepository,\
+    CartItemRepository, OrderRepository, TicketRepository
+from .serializers import MovieSerializer, MovieSessionSerializer, EventSerializer, CartItemSerializer, \
+    OrderSerializer, TicketSerializer
+from .models import Cart, CartItem, Order, Ticket, MovieSession, Event
 from django.core.cache import cache
-from .serializers import MovieSerializer, MovieSessionSerializer, EventSerializer, CartItemSerializer, OrderSerializer, TicketSerializer
+from django.shortcuts import get_object_or_404
+from datetime import datetime, timedelta
+
+class OrderService:
+    @staticmethod
+    def create_order(user, cart):
+        order = OrderRepository.create_order(user=user, cart=cart)
+        return {"message": "Order created", "order": OrderSerializer(order).data}
+
+    @staticmethod
+    def get_order_by_user(user):
+        orders = OrderRepository.get_orders_by_user(user)
+        return OrderSerializer(orders, many=True).data
+
+
+class TicketService:
+    @staticmethod
+    def create_ticket(order, event=None, movie_session=None):
+        ticket_number = f"TICKET-{datetime.now().timestamp()}"
+        ticket = TicketRepository.create_ticket(
+            order=order,
+            event=event,
+            movie_session=movie_session,
+            ticket_number=ticket_number
+        )
+        return {"message": "Ticket created", "ticket": TicketSerializer(ticket).data}
 
 class MovieService:
     @staticmethod
     def get_film_by_name(title):
         cache_key = f"film_by_name_{title}"
-
         cached_response = cache.get(cache_key)
         if cached_response:
             return {"message": "Data retrieved from cache.", "data": cached_response}
 
-        # Получаем фильм и его сеансы
-        movie = get_object_or_404(Movie, title__iexact=title)
-        sessions = MovieSession.objects.filter(movie_id=movie.id)
+        movie = MovieRepository.get_movie_by_title(title)
+        if not movie:
+            raise ValueError("Movie not found")
 
-        # Сериализуем данные
+        sessions = MovieSessionRepository.get_sessions_for_movie(movie.id)
+
         movie_serializer = MovieSerializer(movie)
         session_serializer = MovieSessionSerializer(sessions, many=True)
 
@@ -26,7 +53,6 @@ class MovieService:
             "sessions": session_serializer.data
         }
 
-        # Кэшируем данные
         cache.set(cache_key, response_data, 60 * 15)
         return response_data
 
@@ -40,25 +66,14 @@ class MovieService:
         if cached_response:
             return {"message": "Data retrieved from cache.", "data": cached_response}
 
-        # Преобразуем строку даты
         try:
             date_obj = datetime.strptime(date, '%Y-%m-%d').date()
         except ValueError:
             raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
 
-        # Фильтрация сеансов по дате и времени
-        if time:
-            try:
-                time_obj = datetime.strptime(time, '%H:%M').time()
-            except ValueError:
-                raise ValueError("Invalid time format. Please use HH:MM.")
-            sessions = MovieSession.objects.filter(date=date_obj, time__gt=time_obj)
-        else:
-            sessions = MovieSession.objects.filter(date=date_obj)
-
-        # Сериализуем фильмы и сеансы
+        sessions = MovieSessionRepository.get_sessions_for_day(date_obj, time)
         movie_ids = sessions.values_list('movie_id', flat=True).distinct()
-        movies = Movie.objects.filter(id__in=movie_ids)
+        movies = MovieRepository.get_movies_by_ids(movie_ids)
 
         response_data = []
         for movie in movies:
@@ -70,7 +85,6 @@ class MovieService:
                 "sessions": session_serializer.data
             })
 
-        # Кэшируем результат
         cache.set(cache_key, response_data, 60 * 15)
         return response_data
 
@@ -84,13 +98,13 @@ class EventService:
         if cached_response:
             return {"message": "Data retrieved from cache.", "data": cached_response}
 
-        event = get_object_or_404(Event, name__iexact=name)
+        event = EventRepository.get_event_by_name(name)
+        if not event:
+            raise ValueError("Event not found")
 
-        # Сериализуем данные
         event_serializer = EventSerializer(event)
-
-        # Кэшируем результат
         response_data = {"event": event_serializer.data}
+
         cache.set(cache_key, response_data, 60 * 15)
         return response_data
 
@@ -107,62 +121,58 @@ class EventService:
         except ValueError:
             raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
 
-        # Получаем события в пределах одного дня
         start_of_day = date_obj
         end_of_day = date_obj + timedelta(days=1)
 
-        events = Event.objects.filter(date__gte=start_of_day, date__lt=end_of_day)
+        events = EventRepository.get_events_for_day(start_of_day, end_of_day)
 
         if not events.exists():
             return {"message": "No events found for this date."}
 
-        # Сериализуем данные
         event_serializer = EventSerializer(events, many=True)
 
-        response_data = event_serializer.data
+        cache.set(cache_key, event_serializer.data, 60 * 15)
+        return event_serializer.data
 
-        # Кэшируем результат
-        cache.set(cache_key, response_data, 60 * 15)
-        return response_data
 
 
 class CartService:
     @staticmethod
     def add_or_update_cart_item(user, data):
-        cart, _ = Cart.objects.get_or_create(user=user)
+        data = data.copy()
+
+        cart = CartRepository.get_cart_by_user(user)
+        if not cart:
+            cart = CartRepository.create_cart_for_user(user)
+
         data['cart'] = cart.id
+        event_id = data.get('event_id')
+        movie_session_id = data.get('movie_session_id')
 
-        # Используем сериализатор для валидации и сохранения данных
-        serializer = CartItemSerializer(data=data, context={'cart': cart})
-        if serializer.is_valid():
-            cart_item = serializer.save()
-            return {"message": "Item added/updated in cart", "data": CartItemSerializer(cart_item).data}
-        return {"error": serializer.errors}
+        cart_item = None
+        if event_id:
+            event = get_object_or_404(Event, id=event_id)
+            cart_item = CartItemRepository.get_cart_item(cart, event=event)
+        elif movie_session_id:
+            movie_session = get_object_or_404(MovieSession, id=movie_session_id)
+            cart_item = CartItemRepository.get_cart_item(cart, movie_session=movie_session)
 
-    @staticmethod
-    def get_cart(user):
-        cart = Cart.objects.filter(user=user).first()
-        if not cart:
-            return {"message": "Cart is empty."}
+        if cart_item:
+            cart_item.quantity = data.get('quantity', cart_item.quantity)
+            cart_item.save()
+        else:
+            CartItemRepository.create_cart_item(
+                cart,
+                event=event if event_id else None,
+                movie_session=movie_session if movie_session_id else None,
+                quantity=data.get('quantity', 1)
+            )
 
-        cart_items = CartItem.objects.filter(cart=cart)
-        return CartItemSerializer(cart_items, many=True).data
-
-    @staticmethod
-    def remove_cart_item(user, item_id):
-        cart = Cart.objects.filter(user=user).first()
-        if not cart:
-            raise Exception("Cart not found.")
-
-        cart_item = get_object_or_404(CartItem, cart=cart, id=item_id)
-        cart_item.delete()
-        return {"message": "Item removed from cart."}
-
+        return {"message": "Item added/updated in cart"}
 
 class OrderService:
     @staticmethod
     def create_order(user, cart):
-        # Создаем заказ на основе корзины
         order = Order.objects.create(user=user, cart=cart, status="pending")
         return {"message": "Order created", "order": OrderSerializer(order).data}
 
@@ -183,3 +193,4 @@ class TicketService:
             ticket_number=ticket_number
         )
         return {"message": "Ticket created", "ticket": TicketSerializer(ticket).data}
+s

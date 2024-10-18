@@ -75,13 +75,9 @@ class CartItemSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        """
-        Переопределяем метод create для обработки добавления или обновления элементов в корзине.
-        """
         event_id = validated_data.pop('event_id', None)
         movie_session_id = validated_data.pop('movie_session_id', None)
-        cart = self.context['cart']  # Получаем корзину из контекста
-
+        cart = self.context['cart']
         if event_id:
             event = get_object_or_404(Event, id=event_id)
             cart_item, created = CartItem.objects.get_or_create(cart=cart, event=event)
@@ -89,16 +85,12 @@ class CartItemSerializer(serializers.ModelSerializer):
             movie_session = get_object_or_404(MovieSession, id=movie_session_id)
             cart_item, created = CartItem.objects.get_or_create(cart=cart, movie_session=movie_session)
 
-        # Обновляем количество, если элемент уже существует
         cart_item.quantity = validated_data.get('quantity', 1)
         cart_item.save()
 
         return cart_item
 
     def update(self, instance, validated_data):
-        """
-        Переопределяем метод update для обновления существующего элемента корзины.
-        """
         instance.quantity = validated_data.get('quantity', instance.quantity)
         instance.save()
         return instance
