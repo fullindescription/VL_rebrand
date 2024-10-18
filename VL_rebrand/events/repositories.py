@@ -1,7 +1,6 @@
-
-from .models import Event, Movie, MovieSession, Cart, CartItem
+from .models import Event, Movie, MovieSession, Cart, CartItem, Order, Ticket
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Order, Ticket
+
 
 class OrderRepository:
     @staticmethod

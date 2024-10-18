@@ -1,24 +1,15 @@
-from .repositories import EventRepository, MovieRepository, MovieSessionRepository
-from django.core.cache import cache
-from datetime import datetime, timedelta
-from .serializers import MovieSerializer, MovieSessionSerializer, EventSerializer
-from django.shortcuts import get_object_or_404
+from .repositories import EventRepository, MovieRepository, MovieSessionRepository, CartRepository,\
+    CartItemRepository, OrderRepository, TicketRepository
+from .serializers import MovieSerializer, MovieSessionSerializer, EventSerializer, CartItemSerializer, \
+    OrderSerializer, TicketSerializer
 from .models import Cart, CartItem, Order, Ticket, MovieSession, Event
-from .serializers import CartItemSerializer, OrderSerializer, TicketSerializer
-from .repositories import CartRepository, CartItemRepository
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
-from .models import Cart, CartItem
-from .serializers import CartItemSerializer
-from .repositories import OrderRepository, TicketRepository
-from .serializers import OrderSerializer, TicketSerializer
-from datetime import datetime
-from .repositories import MovieRepository
-from .serializers import MovieSerializer, MovieSessionSerializer
+from datetime import datetime, timedelta
 
 class OrderService:
     @staticmethod
     def create_order(user, cart):
-        # Создаем заказ через репозиторий
         order = OrderRepository.create_order(user=user, cart=cart)
         return {"message": "Order created", "order": OrderSerializer(order).data}
 
@@ -32,7 +23,6 @@ class TicketService:
     @staticmethod
     def create_ticket(order, event=None, movie_session=None):
         ticket_number = f"TICKET-{datetime.now().timestamp()}"
-        # Создаем билет через репозиторий
         ticket = TicketRepository.create_ticket(
             order=order,
             event=event,
@@ -45,7 +35,6 @@ class MovieService:
     @staticmethod
     def get_film_by_name(title):
         cache_key = f"film_by_name_{title}"
-
         cached_response = cache.get(cache_key)
         if cached_response:
             return {"message": "Data retrieved from cache.", "data": cached_response}
@@ -83,7 +72,6 @@ class MovieService:
             raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
 
         sessions = MovieSessionRepository.get_sessions_for_day(date_obj, time)
-
         movie_ids = sessions.values_list('movie_id', flat=True).distinct()
         movies = MovieRepository.get_movies_by_ids(movie_ids)
 
@@ -151,15 +139,13 @@ class EventService:
 class CartService:
     @staticmethod
     def add_or_update_cart_item(user, data):
-        # Создаем изменяемую копию data
         data = data.copy()
 
         cart = CartRepository.get_cart_by_user(user)
         if not cart:
             cart = CartRepository.create_cart_for_user(user)
 
-        data['cart'] = cart.id  # Теперь это не вызовет ошибки
-
+        data['cart'] = cart.id
         event_id = data.get('event_id')
         movie_session_id = data.get('movie_session_id')
 
@@ -172,11 +158,9 @@ class CartService:
             cart_item = CartItemRepository.get_cart_item(cart, movie_session=movie_session)
 
         if cart_item:
-            # Если элемент уже существует, обновляем количество
             cart_item.quantity = data.get('quantity', cart_item.quantity)
             cart_item.save()
         else:
-            # Если элемент не существует, создаем новый
             CartItemRepository.create_cart_item(
                 cart,
                 event=event if event_id else None,
@@ -189,7 +173,6 @@ class CartService:
 class OrderService:
     @staticmethod
     def create_order(user, cart):
-        # Создаем заказ на основе корзины
         order = Order.objects.create(user=user, cart=cart, status="pending")
         return {"message": "Order created", "order": OrderSerializer(order).data}
 
@@ -210,3 +193,4 @@ class TicketService:
             ticket_number=ticket_number
         )
         return {"message": "Ticket created", "ticket": TicketSerializer(ticket).data}
+s
