@@ -21,23 +21,33 @@ def get_film_by_name(request):
     if not title:
         return Response({"error": "Please provide a movie title"}, status=status.HTTP_400_BAD_REQUEST)
 
+    cache_key = f"film_by_name_{title}"
+
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        cached_response_with_message = {
+            "message": "Data retrieved from cache.",
+            "data": cached_response
+        }
+        return Response(cached_response_with_message, status=status.HTTP_200_OK)
+
     try:
         movie = Movie.objects.get(title__iexact=title)
     except Movie.DoesNotExist:
         return Response({"error": "Movie not found"}, status=status.HTTP_404_NOT_FOUND)
 
     movie_serializer = MovieSerializer(movie)
-
-    movie_id = movie.id
-
-    sessions = MovieSession.objects.filter(movie_id=movie_id)
-
+    sessions = MovieSession.objects.filter(movie_id=movie.id)
     session_serializer = MovieSessionSerializer(sessions, many=True)
 
-    return Response({
+    response_data = {
         "movie": movie_serializer.data,
         "sessions": session_serializer.data
-    }, status=status.HTTP_200_OK)
+    }
+
+    cache.set(cache_key, response_data, 60 * 15)
+
+    return Response(response_data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -53,15 +63,17 @@ def get_films_for_day(request):
     except ValueError:
         return Response({"error": "Invalid date format. Please use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Формируем ключ для кеша
     cache_key = f"films_for_day_{date}"
     if time:
         cache_key += f"_{time}"
 
-    # Проверяем, есть ли данные в кеше
     cached_response = cache.get(cache_key)
     if cached_response:
-        return Response(cached_response, status=status.HTTP_200_OK)
+        cached_response_with_message = {
+            "message": "Data retrieved from cache.",
+            "data": cached_response
+        }
+        return Response(cached_response_with_message, status=status.HTTP_200_OK)
 
     if time:
         try:
@@ -71,7 +83,6 @@ def get_films_for_day(request):
     else:
         time_obj = None
 
-    # Фильтрация сеансов
     if time_obj:
         sessions = MovieSession.objects.filter(date=date_obj, time__gt=time_obj)
     else:
@@ -94,7 +105,6 @@ def get_films_for_day(request):
             "sessions": session_serializer.data
         })
 
-    # Сохраняем данные в кеш на 15 минут
     cache.set(cache_key, response_data, 60 * 15)
 
     return Response(response_data, status=status.HTTP_200_OK)
@@ -169,18 +179,27 @@ def get_event_by_name(request):
     if not name:
         return Response({"error": "Please provide an event name"}, status=status.HTTP_400_BAD_REQUEST)
 
+    cache_key = f"event_by_name_{name}"
+
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        cached_response_with_message = {
+            "message": "Data retrieved from cache.",
+            "data": cached_response
+        }
+        return Response(cached_response_with_message, status=status.HTTP_200_OK)
+
     try:
         event = Event.objects.get(name__iexact=name)
     except Event.DoesNotExist:
         return Response({"error": "Event not found"}, status=status.HTTP_404_NOT_FOUND)
 
     event_serializer = EventSerializer(event)
+    response_data = {"event": event_serializer.data}
 
-    event_id = event.id
+    cache.set(cache_key, response_data, 60 * 15)
 
-    return Response({
-        "event": event_serializer.data
-    }, status=status.HTTP_200_OK)
+    return Response(response_data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -191,23 +210,34 @@ def get_events_for_day(request):
         return Response({"error": "Please provide a date in the format YYYY-MM-DD"},
                         status=status.HTTP_400_BAD_REQUEST)
 
+    cache_key = f"events_for_day_{date}"
+
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        cached_response_with_message = {
+            "message": "Data retrieved from cache.",
+            "data": cached_response
+        }
+        return Response(cached_response_with_message, status=status.HTTP_200_OK)
+
     try:
         date_obj = datetime.strptime(date, '%Y-%m-%d')
     except ValueError:
         return Response({"error": "Invalid date format. Please use YYYY-MM-DD."},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    # Устанавливаем начало и конец дня
     start_of_day = date_obj
     end_of_day = date_obj + timedelta(days=1)
 
-    # Фильтрация событий по диапазону дат
     events = Event.objects.filter(date__gte=start_of_day, date__lt=end_of_day)
 
     if not events.exists():
         return Response({"message": "No events found for this date."},
                         status=status.HTTP_404_NOT_FOUND)
 
-    # Сериализуем и возвращаем список событий
     event_serializer = EventSerializer(events, many=True)
-    return Response(event_serializer.data, status=status.HTTP_200_OK)
+    response_data = event_serializer.data
+
+    cache.set(cache_key, response_data, 60 * 15)
+
+    return Response(response_data, status=status.HTTP_200_OK)
