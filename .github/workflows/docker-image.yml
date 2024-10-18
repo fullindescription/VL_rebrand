@@ -20,5 +20,5 @@ jobs:
 
     - name: Build the Docker image
       run: |
-            docker build . --file Dockerfile --tag ghcr.io/marsvest/vl_backend:latest
+            docker build --file Dockerfile --tag ghcr.io/marsvest/vl_backend:latest .
             docker push ghcr.io/marsvest/vl_backend:latest
