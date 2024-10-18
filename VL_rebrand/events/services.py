@@ -3,9 +3,43 @@ from django.core.cache import cache
 from datetime import datetime, timedelta
 from .serializers import MovieSerializer, MovieSessionSerializer, EventSerializer
 from django.shortcuts import get_object_or_404
-from .models import Cart, CartItem, Order, Ticket
+from .models import Cart, CartItem, Order, Ticket, MovieSession, Event
 from .serializers import CartItemSerializer, OrderSerializer, TicketSerializer
+from .repositories import CartRepository, CartItemRepository
+from django.shortcuts import get_object_or_404
+from .models import Cart, CartItem
+from .serializers import CartItemSerializer
+from .repositories import OrderRepository, TicketRepository
+from .serializers import OrderSerializer, TicketSerializer
+from datetime import datetime
+from .repositories import MovieRepository
+from .serializers import MovieSerializer, MovieSessionSerializer
 
+class OrderService:
+    @staticmethod
+    def create_order(user, cart):
+        # Создаем заказ через репозиторий
+        order = OrderRepository.create_order(user=user, cart=cart)
+        return {"message": "Order created", "order": OrderSerializer(order).data}
+
+    @staticmethod
+    def get_order_by_user(user):
+        orders = OrderRepository.get_orders_by_user(user)
+        return OrderSerializer(orders, many=True).data
+
+
+class TicketService:
+    @staticmethod
+    def create_ticket(order, event=None, movie_session=None):
+        ticket_number = f"TICKET-{datetime.now().timestamp()}"
+        # Создаем билет через репозиторий
+        ticket = TicketRepository.create_ticket(
+            order=order,
+            event=event,
+            movie_session=movie_session,
+            ticket_number=ticket_number
+        )
+        return {"message": "Ticket created", "ticket": TicketSerializer(ticket).data}
 
 class MovieService:
     @staticmethod
@@ -113,38 +147,44 @@ class EventService:
         return event_serializer.data
 
 
+
 class CartService:
     @staticmethod
     def add_or_update_cart_item(user, data):
-        cart, _ = Cart.objects.get_or_create(user=user)
-        data['cart'] = cart.id
+        # Создаем изменяемую копию data
+        data = data.copy()
 
-        # Используем сериализатор для валидации и сохранения данных
-        serializer = CartItemSerializer(data=data, context={'cart': cart})
-        if serializer.is_valid():
-            cart_item = serializer.save()
-            return {"message": "Item added/updated in cart", "data": CartItemSerializer(cart_item).data}
-        return {"error": serializer.errors}
-
-    @staticmethod
-    def get_cart(user):
-        cart = Cart.objects.filter(user=user).first()
+        cart = CartRepository.get_cart_by_user(user)
         if not cart:
-            return {"message": "Cart is empty."}
+            cart = CartRepository.create_cart_for_user(user)
 
-        cart_items = CartItem.objects.filter(cart=cart)
-        return CartItemSerializer(cart_items, many=True).data
+        data['cart'] = cart.id  # Теперь это не вызовет ошибки
 
-    @staticmethod
-    def remove_cart_item(user, item_id):
-        cart = Cart.objects.filter(user=user).first()
-        if not cart:
-            raise Exception("Cart not found.")
+        event_id = data.get('event_id')
+        movie_session_id = data.get('movie_session_id')
 
-        cart_item = get_object_or_404(CartItem, cart=cart, id=item_id)
-        cart_item.delete()
-        return {"message": "Item removed from cart."}
+        cart_item = None
+        if event_id:
+            event = get_object_or_404(Event, id=event_id)
+            cart_item = CartItemRepository.get_cart_item(cart, event=event)
+        elif movie_session_id:
+            movie_session = get_object_or_404(MovieSession, id=movie_session_id)
+            cart_item = CartItemRepository.get_cart_item(cart, movie_session=movie_session)
 
+        if cart_item:
+            # Если элемент уже существует, обновляем количество
+            cart_item.quantity = data.get('quantity', cart_item.quantity)
+            cart_item.save()
+        else:
+            # Если элемент не существует, создаем новый
+            CartItemRepository.create_cart_item(
+                cart,
+                event=event if event_id else None,
+                movie_session=movie_session if movie_session_id else None,
+                quantity=data.get('quantity', 1)
+            )
+
+        return {"message": "Item added/updated in cart"}
 
 class OrderService:
     @staticmethod
