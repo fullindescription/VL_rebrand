@@ -5,8 +5,7 @@
   background-color: rgba(255, 255, 255, 0.5);
   margin: 0 5px;
 }
-
-.carousel-indicators .active {
+.carousel-indicators [data-bs-target] .active {
   background-color: rgb(255, 255, 255);
   width: 14px;
   height: 14px;

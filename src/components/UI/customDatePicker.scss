@@ -1,0 +1,71 @@
+// Переменные для цветов
+$primary-color: #FFA07A; // Мягкий оранжевый
+$light-bg: #FFF7F0; // Светлый фон с теплым оттенком
+$dark-text: #555; // Более мягкий серый для текста
+$disabled-text: #ddd;
+$border-radius: 10px;
+$box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+// Контейнер для календаря
+.calendar-container {
+  position: absolute;
+  right: 20%;
+
+  // Стилизация самого календаря
+  .react-datepicker {
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+    border-radius: $border-radius;
+
+    // Стилизация заголовка календаря (года и месяца)
+    &__header {
+      background-color: $primary-color;
+      border-bottom: none;
+      color: white;
+      padding: 10px;
+      border-radius: $border-radius $border-radius 0 0;
+    }
+
+    // Стилизация дней календаря
+    &__day {
+      color: $dark-text;
+
+      // Выделение сегодняшнего дня
+      &--today {
+        font-weight: bold;
+        color: black;
+      }
+
+      // Выделение выбранного дня
+      &--selected {
+        background-color: $primary-color;
+        color: white;
+      }
+
+      // Отключенные дни
+      &--disabled {
+        color: $disabled-text;
+      }
+    }
+
+    // Выпадающие списки месяца и года
+    &__month-dropdown,
+    &__year-dropdown {
+      background-color: #f1f1f1;
+      border-radius: 5px;
+    }
+
+    // Кнопка "Сегодня"
+    &__today-button {
+      background-color: $primary-color;
+      color: white;
+      padding: 8px;
+      width: 100%;
+      border-radius: 0 0 $border-radius $border-radius;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}
+
+

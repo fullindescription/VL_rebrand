@@ -1,7 +1,20 @@
 .movie-card {
-  transition: transform 0.3s ease-in-out; /* Плавный переход */
-}
+  .container {
+    transition: transform 0.3s ease-in-out; // Плавная анимация
+  }
 
-.movie-card:hover {
-  transform: scale(1.05); /* Увеличение карточки при наведении */
+  // Изображение на карточке увеличивается при наведении
+  .container:first-child {
+    &:hover {
+      transform: scale(1.05); // Увеличение изображения
+    }
+  }
+
+  // Плитки с ценами увеличиваются при наведении
+  .card-body .bg-secondary {
+    transition: transform 0.3s ease-in-out; // Плавная анимация для цен
+    &:hover {
+      transform: scale(1.05); // Увеличение плиток с ценами
+    }
+  }
 }

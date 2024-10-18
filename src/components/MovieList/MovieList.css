@@ -1,10 +1,14 @@
-@charset "UTF-8";
-.movie-card {
-  transition: transform 0.3s ease-in-out; /* Плавный переход */
+.movie-card .container {
+  transition: transform 0.3s ease-in-out;
 }
-
-.movie-card:hover {
-  transform: scale(1.05); /* Увеличение карточки при наведении */
+.movie-card .container:first-child:hover {
+  transform: scale(1.05);
+}
+.movie-card .card-body .bg-secondary {
+  transition: transform 0.3s ease-in-out;
+}
+.movie-card .card-body .bg-secondary:hover {
+  transform: scale(1.05);
 }
 
 /*# sourceMappingURL=MovieList.css.map */
