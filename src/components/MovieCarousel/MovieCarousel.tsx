@@ -18,15 +18,15 @@ const MovieCarousel: React.FC = () => {
                 <div className="carousel-inner">
                     <div className="carousel-item active">
                         <img src="/images/1.jpg" className="d-block w-100 img-fluid rounded"
-                             style={{height: '400px', objectFit: 'cover'}} alt="Первый слайд"/>
+                             style={{height: '360px', objectFit: 'cover'}} alt="Первый слайд"/>
                     </div>
                     <div className="carousel-item">
                         <img src="/images/1.jpg" className="d-block w-100 img-fluid rounded"
-                             style={{height: '400px', objectFit: 'cover'}} alt="Первый слайд"/>
+                             style={{height: '360px', objectFit: 'cover'}} alt="Первый слайд"/>
                     </div>
                     <div className="carousel-item">
                         <img src="/images/1.jpg" className="d-block w-100 img-fluid rounded"
-                             style={{height: '400px', objectFit: 'cover'}} alt="Первый слайд"/>
+                             style={{height: '360px', objectFit: 'cover'}} alt="Первый слайд"/>
                     </div>
                 </div>
                 <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"

@@ -7,11 +7,15 @@ import Footer from './components/UI/Footer';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
+import ScrollToTop from './components/UI/ScrollToTop';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { format } from 'date-fns';
 
 const App: React.FC = () => {
     const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
-    const [selectedDate, setSelectedDate] = useState<string>('2024-10-17'); // Начальная дата
+    const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd')); // Начальная дата — текущая
+    const [currentView, setCurrentView] = useState<string>('Афиша'); // Начальное значение заголовка
+    const [currentFilter, setCurrentFilter] = useState<string>('');
 
     useEffect(() => {
         if (username) {
@@ -27,8 +31,10 @@ const App: React.FC = () => {
                 title="VL.RU"
                 username={username}
                 setUsername={setUsername}
-                selectedDateString={selectedDate} // Передаем строку даты в Header
+                selectedDateString={selectedDate} // Передаем строку текущей даты в Header
                 setSelectedDate={setSelectedDate} // Функция для изменения даты
+                setCurrentView={setCurrentView} // Функция для изменения текущего заголовка
+                setCurrentFilter={setCurrentFilter}
             />
             <Routes>
                 <Route
@@ -64,13 +70,16 @@ const App: React.FC = () => {
                         <>
                             <main id="main-content">
                                 <MovieCarousel />
-                                <MovieList selectedDate={selectedDate} /> {/* Передаем выбранную дату */}
+                                <MovieList selectedDate={selectedDate} currentView={currentView} currentFilter={currentFilter} /> {/* Передаем выбранную дату и текущий заголовок */}
                             </main>
                             <Footer />
                         </>
                     }
                 />
             </Routes>
+
+            {/* Добавляем ScrollToTop компонент */}
+            <ScrollToTop />
         </div>
     );
 };
