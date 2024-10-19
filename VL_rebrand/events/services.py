@@ -33,30 +33,6 @@ class TicketService:
 
 class MovieService:
     @staticmethod
-    def get_film_by_name(title):
-        cache_key = f"film_by_name_{title}"
-        cached_response = cache.get(cache_key)
-        if cached_response:
-            return {"message": "Data retrieved from cache.", "data": cached_response}
-
-        movie = MovieRepository.get_movie_by_title(title)
-        if not movie:
-            raise ValueError("Movie not found")
-
-        sessions = MovieSessionRepository.get_sessions_for_movie(movie.id)
-
-        movie_serializer = MovieSerializer(movie)
-        session_serializer = MovieSessionSerializer(sessions, many=True)
-
-        response_data = {
-            "movie": movie_serializer.data,
-            "sessions": session_serializer.data
-        }
-
-        cache.set(cache_key, response_data, 60 * 15)
-        return response_data
-
-    @staticmethod
     def get_films_for_day(date, time=None):
         cache_key = f"films_for_day_{date}"
         if time:
@@ -71,23 +47,46 @@ class MovieService:
         except ValueError:
             raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
 
-        sessions = MovieSessionRepository.get_sessions_for_day(date_obj, time)
-        movie_ids = sessions.values_list('movie_id', flat=True).distinct()
+        if time:
+            time_obj = datetime.strptime(time, '%H:%M').time()
+            datetime_obj = datetime.combine(date_obj, time_obj)
+        else:
+            datetime_obj = datetime(date_obj.year, date_obj.month, date_obj.day)
+
+        timestamp = datetime_obj.timestamp()
+
+        sessions = MovieSessionRepository.get_sessions_for_day(timestamp)
+
+        movie_ids = list({session['movie_id'] if isinstance(session, dict) else session.movie_id for session in sessions})
+
         movies = MovieRepository.get_movies_by_ids(movie_ids)
 
         response_data = []
         for movie in movies:
-            movie_sessions = sessions.filter(movie=movie)
+            if isinstance(sessions[0], dict):
+                movie_sessions = [session for session in sessions if session['movie_id'] == movie.id]
+            else:
+                movie_sessions = sessions.filter(movie=movie)
+
+            movie_sessions_data = []
+            for session in movie_sessions:
+                if isinstance(session, dict):
+                    session_data = session
+                else:
+                    session_data = MovieSessionSerializer(session).data
+                # Убедимся, что поле 'date' присутствует, добавим его, если нет
+                if 'date' not in session_data:
+                    session_data['date'] = getattr(session, 'date', None)
+                movie_sessions_data.append(session_data)
+
             movie_serializer = MovieSerializer(movie)
-            session_serializer = MovieSessionSerializer(movie_sessions, many=True)
             response_data.append({
                 "movie": movie_serializer.data,
-                "sessions": session_serializer.data
+                "sessions": movie_sessions_data
             })
 
         cache.set(cache_key, response_data, 60 * 15)
         return response_data
-
 
 class EventService:
     @staticmethod
