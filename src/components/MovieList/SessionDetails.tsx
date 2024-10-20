@@ -105,7 +105,7 @@ const SessionDetails: React.FC<SessionDetailsProps> = ({
                     onHide={() => setShowSeatSelection(false)}
                     session={{
                         ...selectedSession,
-                        occupiedSeats: selectedSession.occupiedSeats || [], // Передаем занятые места или пустой массив
+                        // occupiedSeats: selectedSession.occupiedSeats || [], // Передаем занятые места или пустой массив
                     }}
                     onSeatsSelected={handleAddToCart}
                 />
