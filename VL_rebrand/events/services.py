@@ -192,4 +192,4 @@ class TicketService:
             movie_session=movie_session,
             ticket_number=ticket_number
         )
-        return {"message": "Ticket created", "ticket": TicketSerializer(ticket).data}
+        return {"message": "Ticket  created", "ticket": TicketSerializer(ticket).data}
