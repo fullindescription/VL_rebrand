@@ -1,49 +1,49 @@
-.movie-card {
+.event-card {
   display: flex;
   flex-direction: row;
   overflow: hidden;
   background-color: #261d1d;
   border-radius: 32px;
 }
-.movie-card .container {
+.event-card .container {
   transition: transform 0.3s ease-in-out;
 }
-.movie-card .image-container {
+.event-card .image-container {
   width: 227px;
   border-radius: 7px;
   background-size: cover;
   background-position: center;
   transition: transform 0.3s ease-in-out;
 }
-.movie-card .image-container:hover {
+.event-card .image-container:hover {
   transform: scale(1.05);
 }
-.movie-card .card-body {
+.event-card .card-body {
   padding: 16px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
 }
-.movie-card .card-title {
+.event-card .card-title {
   font-size: 24px;
   font-weight: bold;
   color: white;
 }
-.movie-card .card-category {
+.event-card .card-category {
   font-size: 16px;
   color: #b0b0b0;
 }
-.movie-card .card-duration {
+.event-card .card-duration {
   font-size: 14px;
   color: #999999;
 }
-.movie-card .sessions {
+.event-card .sessions {
   display: flex;
   gap: 10px;
   margin-left: 0;
 }
-.movie-card .session-tile-small {
+.event-card .session-tile-small {
   width: 100px;
   height: 120px;
   border-radius: 8.25px;
@@ -53,28 +53,28 @@
   align-items: center;
   justify-content: center;
 }
-.movie-card .session-tile-small:hover {
+.event-card .session-tile-small:hover {
   transform: scale(1.05);
 }
-.movie-card .session-time {
+.event-card .session-time {
   font-size: 20px;
   color: white;
 }
-.movie-card .session-price,
-.movie-card .session-seats {
+.event-card .session-price,
+.event-card .session-seats {
   font-size: 14px;
   color: #b0b0b0;
 }
-.movie-card .session-more {
+.event-card .session-more {
   font-size: 16px;
   color: white;
 }
-.movie-card .sessionN {
+.event-card .sessionN {
   width: 90%;
 }
-.movie-card .sessionN:hover {
+.event-card .sessionN:hover {
   transform: scale(1.05);
   transition: transform 0.3s ease-in-out;
 }
 
-/*# sourceMappingURL=MovieList.css.map */
+/*# sourceMappingURL=EventList.css.map */
