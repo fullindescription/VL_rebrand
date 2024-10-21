@@ -20,16 +20,11 @@ class MovieSerializer(serializers.ModelSerializer):
 
 
 class MovieSessionSerializer(serializers.ModelSerializer):
-    timestamp = serializers.SerializerMethodField()
+    movie_id = serializers.IntegerField(source='movie.id', read_only=True)
 
     class Meta:
         model = MovieSession
-        fields = ['id', 'movie_id', 'date', 'time', 'price', 'available_tickets', 'timestamp']
-
-    def get_timestamp(self, obj):
-        # Преобразуем дату и время в timestamp
-        date_time_obj = datetime.combine(obj.date, obj.time)
-        return int(date_time_obj.timestamp())
+        fields = ['id', 'event_id', 'date', 'time', 'price', 'available_tickets']
 
 
 class EventCategorySerializer(serializers.ModelSerializer):
