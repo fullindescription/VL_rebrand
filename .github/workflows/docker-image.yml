@@ -2,7 +2,7 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "Back-DEV" ]
+    branches: [ "Back-DEV-ci" ]
 
 jobs:
 
@@ -19,6 +19,12 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.CICD_TOKEN }}
+
+    - name: Autotests
+      run: |
+        cd ./VL_rebrand/
+        python3 -m pip install -r requirements.txt
+        python3 manage.py test
 
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ghcr.io/marsvest/vl_backend:latest
