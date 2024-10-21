@@ -70,6 +70,17 @@ class MovieSessionRepository:
             return MovieSession.objects.filter(date=date, time__gt=time)
         return MovieSession.objects.filter(date=date)
 
+class MoviePremierSessionRepository:
+    @staticmethod
+    def get_sessions_for_movie(movie_id):
+        return MovieSession.objects.filter(movie_id=movie_id)
+
+    @staticmethod
+    def get_sessions_for_day(date, time=None):
+        if time:
+            return MovieSession.objects.filter(date=date, time__gt=time)
+        return MovieSession.objects.filter(date=date)
+
 
 
 

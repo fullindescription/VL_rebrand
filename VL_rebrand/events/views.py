@@ -13,6 +13,12 @@ def get_film_by_name(request):
     response_data = MovieService.get_film_by_name(title)
     return Response(response_data, status=status.HTTP_200_OK)
 
+
+@api_view(['GET'])
+def get_all_premier_movies(request):
+    response_data = MovieService.get_all_premier_movies()
+    return Response(response_data, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 def get_films_for_day(request):
     date = request.GET.get('date', None)

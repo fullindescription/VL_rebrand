@@ -27,6 +27,14 @@ class MovieSessionSerializer(serializers.ModelSerializer):
         fields = ['id', 'movie_id', 'date', 'time', 'price', 'available_tickets']
 
 
+class MoviePremierSessionSerializer(serializers.ModelSerializer):
+    movie_id = serializers.IntegerField(source='movie.id', read_only=True)
+
+    class Meta:
+        model = MovieSession
+        fields = ['id', 'movie_id', 'date', 'time', 'price', 'available_tickets']
+
+
 class EventCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = EventCategory

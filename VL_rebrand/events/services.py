@@ -1,10 +1,9 @@
 from rest_framework import status
-
 from .repositories import EventRepository, MovieRepository, MovieSessionRepository, CartRepository,\
-    CartItemRepository, OrderRepository, TicketRepository, EventSessionRepository
+    CartItemRepository, OrderRepository, TicketRepository, EventSessionRepository, MoviePremierSessionRepository
 from .serializers import MovieSerializer, MovieSessionSerializer, EventSerializer, CartItemSerializer, \
-    OrderSerializer, TicketSerializer, EventSessionSerializer
-from .models import Cart, CartItem, Order, Ticket, MovieSession, Event
+    OrderSerializer, TicketSerializer, EventSessionSerializer, MoviePremierSessionSerializer
+from .models import Cart, CartItem, Order, Ticket, MovieSession, Event, MoviePremierSession
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
@@ -55,6 +54,31 @@ class MovieService:
             "movie": movie_serializer.data,
             "sessions": session_serializer.data
         }
+
+        cache.set(cache_key, response_data, 60 * 15)
+        return response_data
+
+    @staticmethod
+    def get_all_premier_movies():
+        cache_key = "all_premier_movies"
+
+        cached_response = cache.get(cache_key)
+        if cached_response:
+            return {"message": "Data retrieved from cache.", "data": cached_response}
+
+        sessions = MoviePremierSession.objects.all()
+        movie_ids = sessions.values_list('movie_id', flat=True).distinct()
+        movies = MovieRepository.get_movies_by_ids(movie_ids)
+
+        response_data = []
+        for movie in movies:
+            movie_sessions = sessions.filter(movie=movie)
+            movie_serializer = MovieSerializer(movie)
+            session_serializer = MoviePremierSessionSerializer(movie_sessions, many=True)
+            response_data.append({
+                "movie": movie_serializer.data,
+                "sessions": session_serializer.data
+            })
 
         cache.set(cache_key, response_data, 60 * 15)
         return response_data
