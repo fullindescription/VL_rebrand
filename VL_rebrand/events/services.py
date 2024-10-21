@@ -7,6 +7,7 @@ from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
 
+
 class OrderService:
     @staticmethod
     def create_order(user, cart):
@@ -179,6 +180,7 @@ class OrderService:
     def get_order_by_user(user):
         orders = Order.objects.filter(user=user)
         return OrderSerializer(orders, many=True).data
+
 
 
 class TicketService:
