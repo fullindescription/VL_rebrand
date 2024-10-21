@@ -115,7 +115,7 @@ class EventService:
         return response_data
 
     @staticmethod
-    def get_event_for_day(date, time=None):
+    def get_events_for_day(date, time=None):
         cache_key = f"event_for_day_{date}"
         if time:
             cache_key += f"_{time}"
