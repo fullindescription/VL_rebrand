@@ -30,7 +30,7 @@ const App: React.FC = () => {
     const [currentFilter, setCurrentFilter] = useState<string>('movies');
     const [movieData, setMovieData] = useState<Movie[]>([]);
 
-    const updateViewTitle = (date: string, filter: string, isHome: boolean, isEventsPage: boolean, isMoviesPage: boolean) => {
+    const updateViewTitle = (date: string, isHome: boolean, isEventsPage: boolean, isMoviesPage: boolean) => {
         const formattedDate = format(parse(date, 'yyyy-MM-dd', new Date()), 'dd MMMM yyyy', { locale: ru });
 
         if (isHome) {
@@ -73,7 +73,7 @@ const App: React.FC = () => {
 
     useEffect(() => {
         // Обновление заголовка при переходе на указанные страницы
-        updateViewTitle(selectedDate, currentFilter, isHome, isEventsPage, isMoviesPage);
+        updateViewTitle(selectedDate, isHome, isEventsPage, isMoviesPage);
     }, [location.pathname, isHome, isEventsPage, isMoviesPage, selectedDate, currentFilter]);
 
     const handleTodayClick = () => {
@@ -110,7 +110,7 @@ const App: React.FC = () => {
                     setMovieData={setMovieData}
                     handleTodayClick={handleTodayClick}
                     handleTomorrowClick={handleTomorrowClick}
-                    updateViewTitle={(date, filter) => updateViewTitle(date, filter, isHome, isEventsPage, isMoviesPage)}
+                    updateViewTitle={(date) => updateViewTitle(date, isHome, isEventsPage, isMoviesPage)}
                     currentFilter={currentFilter}
                     handleDateChange={handleDateChange}
                 />
