@@ -128,7 +128,8 @@ const App: React.FC = () => {
                         <main id="movies-content"><MovieCarousel/><MovieList selectedDate={selectedDate}
                                                                              currentView={currentView}
                                                                              currentFilter="movies"
-                                                                             movieData={movieData}/></main>
+                                                                             movieData={movieData}
+                        /></main>
                         <Footer/></>}/>
                     <Route path="/premiere" element={<>
                         <main id="premiere-content"><MovieCarousel/><PremiereList
