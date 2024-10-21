@@ -1,3 +1,5 @@
+from rest_framework import status
+
 from .repositories import EventRepository, MovieRepository, MovieSessionRepository, CartRepository,\
     CartItemRepository, OrderRepository, TicketRepository, EventSessionRepository
 from .serializers import MovieSerializer, MovieSessionSerializer, EventSerializer, CartItemSerializer, \
@@ -180,6 +182,35 @@ class CartService:
             )
 
         return {"message": "Item added/updated in cart"}
+
+    @staticmethod
+    def get_cart(user):
+        cart = CartRepository.get_cart_by_user(user)
+        if not cart:
+            return {"message": "Cart is empty"}
+
+        cart_items = CartItem.objects.filter(cart=cart)
+        if not cart_items.exists():
+            return {"message": "No items in cart"}
+
+
+        serialized_items = CartItemSerializer(cart_items, many=True).data
+        return serialized_items
+
+    @staticmethod
+    def remove_cart_item(user, item_id):
+
+        cart = CartRepository.get_cart_by_user(user)
+        if not cart:
+            return {"error": "Cart not found"}, status.HTTP_404_NOT_FOUND
+
+        cart_item = CartItem.objects.filter(cart=cart, id=item_id).first()
+        if not cart_item:
+            return {"error": "Cart item not found"}, status.HTTP_404_NOT_FOUND
+
+        # Удаление элемента корзины
+        CartItemRepository.delete_cart_item(cart_item)
+        return {"message": "Item removed from cart"}, status.HTTP_204_NO_CONTENT
 
 class OrderService:
     @staticmethod
