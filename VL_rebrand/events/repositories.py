@@ -1,4 +1,4 @@
-from .models import Event, Movie, MovieSession, Cart, CartItem, Order, Ticket
+from .models import Event, Movie, MovieSession, Cart, CartItem, Order, Ticket, EventSession
 from django.core.exceptions import ObjectDoesNotExist
 from datetime import datetime
 
@@ -24,15 +24,26 @@ class TicketRepository:
 
 class EventRepository:
     @staticmethod
-    def get_event_by_name(name):
+    def get_event_by_name(title):
         try:
-            return Event.objects.get(name__iexact=name)
+            return Event.objects.get(name__iexact=title)
         except ObjectDoesNotExist:
             return None
 
     @staticmethod
-    def get_events_for_day(start_date, end_date):
-        return Event.objects.filter(date__gte=start_date, date__lt=end_date)
+    def get_event_by_ids(event_ids):
+        return Event.objects.filter(id__in=event_ids)
+
+class EventSessionRepository:
+    @staticmethod
+    def get_sessions_for_event(event_id):
+        return EventSession.objects.filter(event_id=event_id)
+
+    @staticmethod
+    def get_sessions_for_day(date, time=None):
+        if time:
+            return EventSession.objects.filter(date=date, time__gt=time)
+        return EventSession.objects.filter(date=date)
 
 
 class MovieRepository:

@@ -25,29 +25,23 @@ def get_films_for_day(request):
 
 @api_view(['GET'])
 def get_event_by_name(request):
-    name = request.GET.get('name', None)
-    if not name:
+    title = request.GET.get('title', None)
+    if not title:
         return Response({"error": "Please provide an event name"}, status=status.HTTP_400_BAD_REQUEST)
 
-    response_data = EventService.get_event_by_name(name)
+    response_data = EventService.get_event_by_name(title)
     return Response(response_data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_events_for_day(request):
     date = request.GET.get('date', None)
+    time = request.GET.get('time', None)
     if not date:
-        return Response({"error": "Please provide a date in the format YYYY-MM-DD"},
-                        status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Please provide a date in the format YYYY-MM-DD"}, status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        response_data = EventService.get_events_for_day(date)
-    except ValueError as e:
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-    if "message" in response_data and response_data["message"] == "No events found for this date.":
-        return Response(response_data, status=status.HTTP_404_NOT_FOUND)
-
+    response_data = EventService.get_events_for_day(date, time)
     return Response(response_data, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

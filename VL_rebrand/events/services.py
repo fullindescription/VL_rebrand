@@ -1,7 +1,7 @@
 from .repositories import EventRepository, MovieRepository, MovieSessionRepository, CartRepository,\
-    CartItemRepository, OrderRepository, TicketRepository
+    CartItemRepository, OrderRepository, TicketRepository, EventSessionRepository
 from .serializers import MovieSerializer, MovieSessionSerializer, EventSerializer, CartItemSerializer, \
-    OrderSerializer, TicketSerializer
+    OrderSerializer, TicketSerializer, EventSessionSerializer
 from .models import Cart, CartItem, Order, Ticket, MovieSession, Event
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
@@ -91,50 +91,60 @@ class MovieService:
 
 class EventService:
     @staticmethod
-    def get_event_by_name(name):
-        cache_key = f"event_by_name_{name}"
-
+    def get_event_by_name(title):
+        cache_key = f"event_by_name_{title}"
         cached_response = cache.get(cache_key)
         if cached_response:
             return {"message": "Data retrieved from cache.", "data": cached_response}
 
-        event = EventRepository.get_event_by_name(name)
+        event = EventRepository.get_event_by_title(title)
         if not event:
-            raise ValueError("Event not found")
+            raise ValueError("Movie not found")
+
+        sessions = EventSessionRepository.get_sessions_for_event(event.id)
 
         event_serializer = EventSerializer(event)
-        response_data = {"event": event_serializer.data}
+        session_serializer = EventSessionSerializer(sessions, many=True)
+
+        response_data = {
+            "movie": event_serializer.data,
+            "sessions": session_serializer.data
+        }
 
         cache.set(cache_key, response_data, 60 * 15)
         return response_data
 
     @staticmethod
-    def get_events_for_day(date):
-        cache_key = f"events_for_day_{date}"
+    def get_event_for_day(date, time=None):
+        cache_key = f"event_for_day_{date}"
+        if time:
+            cache_key += f"_{time}"
 
         cached_response = cache.get(cache_key)
         if cached_response:
             return {"message": "Data retrieved from cache.", "data": cached_response}
 
         try:
-            date_obj = datetime.strptime(date, '%Y-%m-%d')
+            date_obj = datetime.strptime(date, '%Y-%m-%d').date()
         except ValueError:
             raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
 
-        start_of_day = date_obj
-        end_of_day = date_obj + timedelta(days=1)
+        sessions = EventSessionRepository.get_sessions_for_day(date_obj, time)
+        event_ids = sessions.values_list('event_id', flat=True).distinct()
+        events = EventRepository.get_event_by_ids(event_ids)
 
-        events = EventRepository.get_events_for_day(start_of_day, end_of_day)
+        response_data = []
+        for event in events:
+            event_sessions = sessions.filter(event=event)
+            event_serializer = EventSerializer(event)
+            session_serializer = EventSessionSerializer(event_sessions, many=True)
+            response_data.append({
+                "event": event_serializer.data,
+                "sessions": session_serializer.data
+            })
 
-        if not events.exists():
-            return {"message": "No events found for this date."}
-
-        event_serializer = EventSerializer(events, many=True)
-
-        cache.set(cache_key, event_serializer.data, 60 * 15)
-        return event_serializer.data
-
-
+        cache.set(cache_key, response_data, 60 * 15)
+        return response_data
 
 class CartService:
     @staticmethod

@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from .models import Movie, MovieCategory, MovieSession, Event, EventCategory, Cart, CartItem, Order, Ticket
+from .models import Movie, MovieCategory, MovieSession, Event, EventCategory, EventSession,Cart, CartItem, Order, Ticket
 
 class MovieCategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,11 +42,20 @@ class EventSerializer(serializers.ModelSerializer):
     category_name = serializers.SerializerMethodField()
 
     class Meta:
-        model = Event
-        fields = ['id', 'name', 'description', 'date', 'price', 'age_restriction', 'available_tickets', 'category_name', 'image_url', 'video_url']  # Заменяем category на category_name
+        model = Movie
+        fields = ['id', 'title', 'description', 'duration', 'category_name', 'age_restriction', 'image_url', 'video_url']  # Добавляем category_name в fields
 
     def get_category_name(self, obj):
         return obj.category.name if obj.category else None
+
+class EventSessionSerializer(serializers.ModelSerializer):
+    event_id = serializers.IntegerField(source='event.id', read_only=True)
+
+    class Meta:
+        model = EventSession
+        fields = ['id', 'event_id', 'date', 'time', 'price', 'available_tickets']
+
+
 
 class CartSerializer(serializers.ModelSerializer):
     class Meta:

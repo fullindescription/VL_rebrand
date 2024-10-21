@@ -40,18 +40,27 @@ class EventCategory(models.Model):
 
 
 class Event(models.Model):
-    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
     description = models.TextField()
-    date = models.DateTimeField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    duration = models.PositiveIntegerField(blank=True, null=True)
+    category = models.ForeignKey('EventCategory', on_delete=models.SET_NULL, null=True, blank=True)
     age_restriction = models.CharField(max_length=5, default="6+")
-    available_tickets = models.PositiveIntegerField()
-    category = models.ForeignKey(EventCategory, on_delete=models.SET_NULL, null=True, blank=True)
     image_url = models.TextField(blank=True, null=True)
     video_url = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.title
+
+class EventSession(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    available_tickets = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.event.title} - {self.date} {self.time}"
+
 
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
