@@ -26,7 +26,7 @@ class EventRepository:
     @staticmethod
     def get_event_by_name(title):
         try:
-            return Event.objects.get(name__iexact=title)
+            return Event.objects.get(title__iexact=title)
         except ObjectDoesNotExist:
             return None
 
@@ -48,7 +48,7 @@ class EventSessionRepository:
 
 class MovieRepository:
     @staticmethod
-    def get_movie_by_title(title):
+    def get_movie_by_name(title):
         try:
             return Movie.objects.get(title__iexact=title)
         except ObjectDoesNotExist:
@@ -65,34 +65,11 @@ class MovieSessionRepository:
         return MovieSession.objects.filter(movie_id=movie_id)
 
     @staticmethod
-    def get_sessions_for_day(timestamp, time=None):
-        # Преобразуем таймстемп в объект datetime
-        datetime_obj = datetime.fromtimestamp(timestamp)
-        date_str = datetime_obj.date()  # Получаем дату
-        time_obj = datetime_obj.time()  # Получаем время
-
-        # Фильтрация по дате и времени
+    def get_sessions_for_day(date, time=None):
         if time:
-            # Если передано время, фильтруем по времени больше указанного
-            sessions = MovieSession.objects.filter(date=date_str, time__gt=time_obj)
-        else:
-            # Если времени нет, фильтруем только по дате
-            sessions = MovieSession.objects.filter(date=date_str)
+            return MovieSession.objects.filter(date=date, time__gt=time)
+        return MovieSession.objects.filter(date=date)
 
-        # Преобразуем результаты в таймстемпы перед возвратом
-        sessions_with_timestamps = []
-        for session in sessions:
-            session_datetime = datetime.combine(session.date, session.time)
-            session_timestamp = session_datetime.timestamp()  # Преобразуем в таймстемп
-            sessions_with_timestamps.append({
-                'id': session.id,
-                'movie_id': session.movie_id,
-                'timestamp': session_timestamp,  # Возвращаем время в формате таймстемпа
-                'available_tickets': session.available_tickets,
-                'price': session.price
-            })
-
-        return sessions_with_timestamps
 
 
 

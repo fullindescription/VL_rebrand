@@ -24,7 +24,7 @@ class MovieSessionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MovieSession
-        fields = ['id', 'event_id', 'date', 'time', 'price', 'available_tickets']
+        fields = ['id', 'movie_id', 'date', 'time', 'price', 'available_tickets']
 
 
 class EventCategorySerializer(serializers.ModelSerializer):
@@ -37,7 +37,7 @@ class EventSerializer(serializers.ModelSerializer):
     category_name = serializers.SerializerMethodField()
 
     class Meta:
-        model = Movie
+        model = Event
         fields = ['id', 'title', 'description', 'duration', 'category_name', 'age_restriction', 'image_url', 'video_url']  # Добавляем category_name в fields
 
     def get_category_name(self, obj):
