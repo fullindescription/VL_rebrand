@@ -1,4 +1,4 @@
-// types.ts
+// Session.ts
 export type Session = {
     id: number;
     title: string; // Добавляем название фильма
@@ -9,4 +9,5 @@ export type Session = {
     seat?: number;
     occupiedSeats?: { row: number; seat: number }[]; // Опционально добавляем список занятых мест
     date: string; // Добавляем свойство `date` для фильтрации по дате
+    quantity: number;
 };

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './MovieList.scss';
 import { format, parse } from 'date-fns';
-import SessionDetails from './SessionDetails.tsx';
-import { Session } from './types'; // Импортируем тип
+import SessionDetails from '../Session/SessionDetails.tsx';
+import { Session } from '../Session/Session.ts'; // Импортируем тип
 
 type Movie = {
     id: number;
@@ -13,6 +13,7 @@ type Movie = {
     category_name: string;
     age_restriction: string;
     image_url: string | null;
+    video_url: string | null
 };
 
 type MovieWithSessions = {
@@ -62,7 +63,7 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const url = `/api/events/getfilmsforday/?date=${selectedDate}&time=00:01`;
+                const url = `/api/events/getfilmsforday/?date=${selectedDate}&time=10:00`;
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
@@ -94,8 +95,13 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
                 setLoading(false);
             }
         };
-        fetchMovies();
-    }, [selectedDate]);
+
+        if (currentFilter === 'movies') {
+            fetchMovies();
+        }
+    }, [selectedDate, currentFilter]);
+
+
 
     if (loading) {
         return <p>Загрузка фильмов...</p>;
@@ -108,7 +114,7 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
     const currentTime = format(new Date(), 'HH:mm');
 
     const filterFutureSessions = (sessions: Session[]) => {
-        return sessions.filter((session) => session.time < currentTime);
+        return sessions.filter((session) => session.time > currentTime);
     };
 
     const formatSessionTime = (time: string) => {
@@ -200,6 +206,7 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
                     allSessions={allSessions.length ? allSessions : selectedSession ? [selectedSession] : []}
                     selectedSession={selectedSession}
                     setSelectedSession={setSelectedSession}
+                    isEvent={false}
                 />
             </section>
         );

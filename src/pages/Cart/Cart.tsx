@@ -1,11 +1,19 @@
 import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import { useCart } from './CartContext';
+import { useCart } from './CartContext.tsx';
 import { format, parse } from 'date-fns';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const formatSessionTime = (time: string) => {
     const parsedTime = parse(time, 'HH:mm:ss', new Date());
     return format(parsedTime, 'HH:mm');
+};
+
+// Функция для получения правильного слова для "билет"
+const getTicketLabel = (quantity: number) => {
+    if (quantity === 1) return 'билет';
+    if (quantity >= 2 && quantity <= 4) return 'билета';
+    return 'билетов';
 };
 
 type CartProps = {
@@ -14,10 +22,9 @@ type CartProps = {
 };
 
 const Cart: React.FC<CartProps> = ({ show, onHide }) => {
-    const { cart, removeFromCart, clearCart } = useCart();
+    const { cart, removeFromCart, clearCart, total } = useCart();
 
     const handlePurchase = () => {
-        // Здесь реализуйте логику для обработки покупки
         alert('Покупка завершена!');
         clearCart();
     };
@@ -33,11 +40,19 @@ const Cart: React.FC<CartProps> = ({ show, onHide }) => {
                         {cart.map((session) => (
                             <li key={session.id} className="mb-2 d-flex justify-content-between align-items-center">
                                 <div>
-                                    <strong>Сеанс:</strong> {formatSessionTime(session.time)}{' '}
-                                    <strong>Цена:</strong> {session.price} ₽
+                                    <strong>{session.title}</strong>
+                                    <div>
+                                        <strong>Сеанс:</strong> {formatSessionTime(session.time)}{' '}
+                                        <strong>Цена:</strong> {session.price} ₽{' '}
+                                        <strong>Количество:</strong> {session.quantity} {getTicketLabel(session.quantity)}
+                                    </div>
                                 </div>
-                                <Button variant="outline-danger" size="sm" onClick={() => removeFromCart(session.id)}>
-                                    Удалить
+                                <Button
+                                    variant="outline-danger"
+                                    size="sm"
+                                    onClick={() => removeFromCart(session.id, session.row, session.seat)}
+                                >
+                                    <i className="bi bi-trash3-fill"></i> Удалить
                                 </Button>
                             </li>
                         ))}
@@ -47,6 +62,7 @@ const Cart: React.FC<CartProps> = ({ show, onHide }) => {
                 )}
             </Modal.Body>
             <Modal.Footer>
+                <h5>Итог: {total.toFixed(2)} ₽</h5>
                 <Button variant="success" onClick={handlePurchase} disabled={cart.length === 0}>
                     Купить
                 </Button>
