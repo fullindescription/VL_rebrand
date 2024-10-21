@@ -21,10 +21,12 @@ jobs:
         password: ${{ secrets.CICD_TOKEN }}
 
     - name: Autotests
-      run: ls
+      run: |
+        python3 -m pip install -r requirements.txt
+        python3 ./VL_rebrand/manage.py test
 
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ghcr.io/marsvest/vl_backend:latest
 
-    - name: Push the Docker image
-      run: docker push ghcr.io/marsvest/vl_backend:latest
+    # - name: Push the Docker image
+    #   run: docker push ghcr.io/marsvest/vl_backend:latest
