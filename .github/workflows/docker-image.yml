@@ -22,7 +22,7 @@ jobs:
 
     - name: Autotests
       run: |
-        python3 -m pip install -r requirements.txt
+        python3 -m pip install -r ./VL_rebrand/requirements.txt
         python3 ./VL_rebrand/manage.py test
 
     - name: Build the Docker image
