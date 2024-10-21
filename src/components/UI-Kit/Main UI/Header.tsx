@@ -8,10 +8,10 @@ import './customDatePicker.scss';
 import {parse, format} from 'date-fns';
 import {useCart} from '../../../pages/Cart/CartContext.tsx';
 import {ru} from "date-fns/locale";
+import {Movie} from "../../MovieList/Movie.ts";
 
 registerLocale('ru', ru);
 
-// В файле, где определён HeaderProps (например, в Header.tsx)
 type HeaderProps = {
     title: string;
     username: string | null;
@@ -25,23 +25,12 @@ type HeaderProps = {
     handleTomorrowClick: () => void;
     updateViewTitle: (date: string, filter: string) => void;
     currentFilter: string;
-    handleDateChange: (date: Date | null) => void; // Добавлено это свойство
-};
-
-type Movie = {
-    id: number;
-    title: string;
-    description: string;
-    duration: number;
-    category_name: string;
-    age_restriction: string;
-    image_url: string | null;
+    handleDateChange: (date: Date | null) => void;
 };
 
 const Header: React.FC<HeaderProps> = ({
                                            title,
                                            username,
-                                           setUsername,
                                            selectedDateString,
                                            setSelectedDate,
                                            setCurrentView,
@@ -72,16 +61,6 @@ const Header: React.FC<HeaderProps> = ({
             setShowCalendar(false);
             updateViewTitle(formattedDate, currentFilter);
         }
-    };
-
-
-    const handleLogout = () => {
-        localStorage.removeItem('username');
-        localStorage.removeItem('email');
-        localStorage.removeItem('first_name');
-        localStorage.removeItem('last_name');
-        setUsername(null);
-        navigate('/');
     };
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -126,7 +105,6 @@ const Header: React.FC<HeaderProps> = ({
                         >
                             <h1 className="m-0">{title}</h1>
                         </Link>
-
                     </div>
                     <nav className="d-none d-md-flex">
                         <ul className="nav">
@@ -176,15 +154,12 @@ const Header: React.FC<HeaderProps> = ({
                                     Фильмы
                                 </button>
                             </li>
-                            <li className="nav-item">
-                                <button onClick={toggleCalendar} className="btn text-white btn-outline">
-                                    Календарь
-                                </button>
-                            </li>
                         </ul>
                     </nav>
 
                     <div className="d-flex align-items-center">
+
+
                         {/* Dropdown Menu */}
                         <div className="dropdown me-3">
                             <button
@@ -208,44 +183,39 @@ const Header: React.FC<HeaderProps> = ({
                                     </button>
                                 </li>
                                 <li>
-                                    <Link className="dropdown-item" to="/">
-                                        Премьера
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link className="dropdown-item" to="/events">
-                                        События
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link className="dropdown-item" to="/movies">
-                                        Фильмы
-                                    </Link>
-                                </li>
-                                <li>
                                     <button
-                                        className="dropdown-item"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            toggleCalendar();
+                                        onClick={() => {
+                                            setCurrentView('Премьеры');
+                                            setCurrentFilter('premiere');
+                                            navigate('/premiere');
                                         }}
+                                        className="dropdown-item"
                                     >
-                                        Календарь
+                                        Премьера
                                     </button>
                                 </li>
                                 <li>
-                                    <Link className="dropdown-item" to="/profile">
-                                        Профиль
-                                    </Link>
+                                    <button
+                                        onClick={() => {
+                                            setCurrentView('События');
+                                            setCurrentFilter('events');
+                                            navigate('/events');
+                                        }}
+                                        className="dropdown-item"
+                                    >
+                                        События
+                                    </button>
                                 </li>
                                 <li>
-                                    <Link className="dropdown-item" to="/login">
-                                        Войти
-                                    </Link>
-                                </li>
-                                <li>
-                                    <button onClick={handleLogout} className="dropdown-item">
-                                        Выйти
+                                    <button
+                                        onClick={() => {
+                                            setCurrentView('Фильмы');
+                                            setCurrentFilter('movies');
+                                            navigate('/movies');
+                                        }}
+                                        className="dropdown-item"
+                                    >
+                                        Фильмы
                                     </button>
                                 </li>
                                 <li>
@@ -264,22 +234,27 @@ const Header: React.FC<HeaderProps> = ({
                             </ul>
                         </div>
 
+                        {/* Кнопка календаря */}
+                        <div className="d-flex align-items-center">
+                            <button onClick={toggleCalendar} className="btn btn-outline-light d-flex align-items-center me-3">
+                                <i className="bi bi-calendar3"></i>
+                            </button>
+                        </div>
+
+                        {/* Кнопка профиля */}
                         {username ? (
                             <div className="d-flex align-items-center">
                                 <Link to="/profile" className="btn btn-outline-light d-flex align-items-center me-3">
                                     <i className="bi bi-person-circle"></i>
                                 </Link>
-                                <button onClick={handleLogout} className="btn btn-outline-light me-3">
-                                    <i className="fas fa-sign-out-alt"></i>
-                                </button>
                             </div>
                         ) : (
-                            <Link to="/login" className="btn btn-outline text-white">
-                                Вход
+                            <Link to="/login" className="btn btn-outline-light d-flex align-items-center me-3">
+                                <i className="bi bi-person-circle"></i>
                             </Link>
                         )}
 
-                        {/* Session Button */}
+                        {/* Кнопка корзины */}
                         <button
                             className="btn btn-outline-light d-flex align-items-center position-relative"
                             onClick={() => navigate('/cart')}

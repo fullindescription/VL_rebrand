@@ -130,15 +130,17 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
             <h2 className="text-center mb-5">{currentView} в городе Владивосток</h2>
             <div className="row row-cols-1 row-cols-md-2 g-4">
                 {filteredItemsWithSessions.length > 0 ? (
-                    filteredItemsWithSessions.map((item) => (
-                        <div key={item.id} className="col">
-                            <div className="container card bg-dark text-white w-100 h-100 d-flex flex-row home-card p-3">
+                    filteredItemsWithSessions.map((item, index) => (
+                        <div key={`item-${item.id}-${index}`} className="col">
+                            <div
+                                className="container card bg-dark text-white w-100 h-100 d-flex flex-row home-card p-3">
                                 <div className="container position-relative me-1 image-container w-50" style={{
                                     backgroundImage: `url(${item.image_url || '/images/1.jpg'})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                 }}>
-                                    <div className="position-absolute top-0 start-0 m-2 p-1 bg-danger text-white rounded w-auto h-auto">
+                                    <div
+                                        className="position-absolute top-0 start-0 m-2 p-1 bg-danger text-white rounded w-auto h-auto">
                                         {item.age_restriction}
                                     </div>
                                 </div>
@@ -148,9 +150,9 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                         <p className="card-category mt-3">{item.category_name}</p>
                                     </div>
                                     <div className="container d-flex flex-wrap gap-2 mt-1">
-                                        {item.sessions.slice(0, 1).map((session) => (
+                                        {item.sessions.slice(0, 1).map((session, sessionIndex) => (
                                             <div
-                                                key={session.id}
+                                                key={`${session.id}-${item.id}-${sessionIndex}`}
                                                 className="container bg-secondary text-center session-tile-small rounded"
                                                 onClick={() => handleSingleSessionClick(session, item.title)}
                                             >
@@ -167,6 +169,7 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                         {item.sessions.length > 1 && (
                                             <div
                                                 className="container-fluid bg-secondary d-flex flex-column p-1 sessionN mt-1 text-center rounded"
+                                                key={`session-more-${item.id}-${index}`}
                                                 onClick={() => handleAllSessionsClick(item.sessions, item.title)}
                                             >
                                                 <p className="mb-0">
@@ -189,7 +192,7 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                 allSessions={allSessions.length ? allSessions : selectedSession ? [selectedSession] : []}
                 selectedSession={selectedSession}
                 setSelectedSession={setSelectedSession}
-                isEvent={true}
+                isEvent={false}
             />
         </section>
     );

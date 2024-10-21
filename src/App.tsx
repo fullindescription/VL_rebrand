@@ -1,23 +1,22 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {Route, Routes, useLocation} from 'react-router-dom';
 import Header from './components/UI-Kit/Main UI/Header.tsx';
 import MovieCarousel from './components/MovieCarousel/MovieCarousel';
-import {MovieList} from './components/MovieList/MovieList';
+import { MovieList } from './components/MovieList/MovieList';
 import Footer from './components/UI-Kit/Main UI/Footer.tsx';
 import LoginPage from './pages/Profile&Register/LoginPage.tsx';
 import RegisterPage from './pages/Profile&Register/RegisterPage.tsx';
 import ProfilePage from './pages/Profile&Register/ProfilePage.tsx';
 import ScrollToTop from './components/UI-Kit/Outer UI/ScrollToTop.tsx';
 import CartPage from './pages/Cart/CartPage.tsx';
-import {CartProvider} from './pages/Cart/CartContext.tsx';
+import { CartProvider } from './pages/Cart/CartContext.tsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {format, parse, addDays} from 'date-fns';
-import EventList from "./components/EventList/EventList.tsx";
-import {ru} from 'date-fns/locale';
-import {Movie} from "./components/MovieList/Movie.ts";
-import PremiereList from "./components/PremiereList/PremiereList.tsx";
-import HomeList from "./components/HomeList/HomeList.tsx";
-
+import { format, parse, addDays } from 'date-fns';
+import EventList from './components/EventList/EventList.tsx';
+import { ru } from 'date-fns/locale';
+import { Movie } from './components/MovieList/Movie.ts';
+import PremiereList from './components/PremiereList/PremiereList.tsx';
+import HomeList from './components/HomeList/HomeList.tsx';
 
 const App: React.FC = () => {
     const location = useLocation();
@@ -95,6 +94,9 @@ const App: React.FC = () => {
             setSelectedDate(formattedDate);
         }
     };
+
+    // Добавляем проверку на авторизацию
+
 
     return (
         <CartProvider>
