@@ -104,7 +104,7 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
 
     const currentTime = format(new Date(), 'HH:mm');
     const filterFutureSessions = (sessions: any[]) => {
-        return sessions.filter((session) => session.time < currentTime);
+        return sessions.filter((session) => session.time > currentTime);
     };
 
     const formatSessionTime = (time: string) => {

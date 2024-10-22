@@ -138,7 +138,7 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
     const currentTime = format(new Date(), 'HH:mm');
 
     const filterFutureSessions = (sessions: Session[]) => {
-        return sessions.filter((session) => session.time < currentTime);
+        return sessions.filter((session) => session.time > currentTime);
     };
 
     const formatSessionTime = (time: string) => {

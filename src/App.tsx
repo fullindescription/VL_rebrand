@@ -157,7 +157,7 @@ const App: React.FC = () => {
                     <Route path="/home" element={<ProtectedRoute element={<>
                         <main id="main-content"><MovieCarousel/><HomeList selectedDate={selectedDate}
                                                                           currentView={currentView}
-                                                                          currentFilter="home"/></main>
+                                                                          /></main>
                         <Footer/></>} />} />
                 </Routes>
                 <ScrollToTop/>
