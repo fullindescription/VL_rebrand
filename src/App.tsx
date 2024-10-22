@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Header from './components/UI-Kit/Main UI/Header/Header.tsx';
 import MovieCarousel from './components/MovieCarousel/MovieCarousel';
 import { MovieList } from './components/MovieList/MovieList';
@@ -78,6 +78,13 @@ const App: React.FC = () => {
         // Обновление заголовка при переходе на указанные страницы
         updateViewTitle(selectedDate, isHome, isEventsPage, isMoviesPage);
     }, [location.pathname, isHome, isEventsPage, isMoviesPage, selectedDate, currentFilter]);
+
+    useEffect(() => {
+        // Обновление username в localStorage, если он изменился
+        if (username) {
+            localStorage.setItem('username', username);
+        }
+    }, [username]);
 
     const handleTodayClick = () => {
         if (currentFilter === 'premiere') return;

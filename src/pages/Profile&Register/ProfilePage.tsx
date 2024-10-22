@@ -1,24 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
 
-    // Извлекаем данные пользователя из localStorage
-    const user = {
-        username: localStorage.getItem('username') || '',
-        email: localStorage.getItem('email') || '',
-        firstName: localStorage.getItem('first_name') || '',
-        lastName: localStorage.getItem('last_name') || '',
-    };
+    // Добавляем состояние для хранения информации о пользователе
+    const [user, setUser] = useState({
+        username: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+    });
 
-    // Если пользователя нет, перенаправляем на главную
+    // Извлекаем данные пользователя из localStorage при загрузке страницы
     useEffect(() => {
-        if (!user.username) {
+        const username = localStorage.getItem('username');
+        const email = localStorage.getItem('email');
+        const firstName = localStorage.getItem('first_name');
+        const lastName = localStorage.getItem('last_name');
+
+        // Если данные существуют, обновляем состояние пользователя
+        if (username) {
+            setUser({
+                username,
+                email: email || '',
+                firstName: firstName || '',
+                lastName: lastName || '',
+            });
+        } else {
+            // Если пользователя нет, перенаправляем на страницу логина
             navigate('/login');
         }
-    }, [user.username, navigate]);
-
+    }, [navigate]);
 
     // Функция выхода из аккаунта
     const handleLogout = () => {
@@ -27,6 +40,8 @@ const ProfilePage: React.FC = () => {
         localStorage.removeItem('email');
         localStorage.removeItem('first_name');
         localStorage.removeItem('last_name');
+        localStorage.removeItem('access');
+        localStorage.removeItem('refresh');
 
         // Перенаправляем на главную страницу
         navigate('/home');

@@ -1,12 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 import './EventList.scss';
-import {format, parse} from 'date-fns';
+import { format, parse } from 'date-fns';
 import SessionDetails from '../Session/SessionDetails.tsx';
 import EventModal from './EventModal.tsx'; // Импортируем новое модальное окно для событий
-import {Session} from '../Session/Session.ts';
-
+import { Session } from '../Session/Session.ts';
 
 interface Event {
     id: number;
@@ -30,7 +29,7 @@ type EventListProps = {
     currentFilter: string;
 };
 
-const EventList: React.FC<EventListProps> = ({selectedDate, currentView, currentFilter}) => {
+const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, currentFilter }) => {
     const [eventsWithSessions, setEventsWithSessions] = useState<EventWithSessions[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -42,15 +41,12 @@ const EventList: React.FC<EventListProps> = ({selectedDate, currentView, current
     const [selectedEventSessions, setSelectedEventSessions] = useState<Session[]>([]); // Для модального окна событий
     const [showEventModal, setShowEventModal] = useState(false); // Модальное окно для событий
 
-
     const handleSingleSessionClick = (session: Session, eventTitle: string) => {
-
-        setSelectedSession({...session, title: eventTitle});
+        setSelectedSession({ ...session, title: eventTitle });
         setShowModal(true);
     };
 
     const handleAllSessionsClick = (sessions: Session[], eventTitle: string) => {
-
         if (sessions.length > 0) {
             const sessionsWithTitle = sessions.map((session) => ({
                 ...session,
@@ -84,7 +80,8 @@ const EventList: React.FC<EventListProps> = ({selectedDate, currentView, current
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const url = `/api/events/geteventsforday/?date=${selectedDate}&time=12:00`;
+                const currentTime = format(new Date(), 'HH:mm'); // Получаем текущее время
+                const url = `/api/events/geteventsforday/?date=${selectedDate}&time=${currentTime}`; // Передаем текущее время в запрос
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
@@ -125,10 +122,9 @@ const EventList: React.FC<EventListProps> = ({selectedDate, currentView, current
     if (loading) return <p>Загрузка событий...</p>;
     if (error) return <p>{error}</p>;
 
-    const currentTime = format(new Date(), 'HH:mm');
-
+    // Убираем фильтрацию по времени
     const filterFutureSessions = (sessions: Session[]) => {
-        return sessions.filter((session) => session.time > currentTime);
+        return sessions; // Возвращаем все сессии
     };
 
     const formatSessionTime = (time: string) => {
@@ -146,9 +142,10 @@ const EventList: React.FC<EventListProps> = ({selectedDate, currentView, current
                 sessions: futureSessions,
             };
         })
-        .filter((eventWithSessions) =>
-            eventWithSessions.sessions.length > 0 &&
-            (selectedGenres.length === 0 || selectedGenres.includes(eventWithSessions.event.category_name))
+        .filter(
+            (eventWithSessions) =>
+                eventWithSessions.sessions.length > 0 &&
+                (selectedGenres.length === 0 || selectedGenres.includes(eventWithSessions.event.category_name))
         );
 
     const getMoviesLabel = (count: number) => {
@@ -157,7 +154,7 @@ const EventList: React.FC<EventListProps> = ({selectedDate, currentView, current
         return 'сеансов';
     };
 
-    const genreOptions = Array.from(new Set(eventsWithSessions.map(({event}) => event.category_name))).map((genre) => ({
+    const genreOptions = Array.from(new Set(eventsWithSessions.map(({ event }) => event.category_name))).map((genre) => ({
         label: genre.charAt(0).toUpperCase() + genre.slice(1).toLowerCase(),
         value: genre,
     }));
@@ -187,15 +184,17 @@ const EventList: React.FC<EventListProps> = ({selectedDate, currentView, current
 
             <div className="row row-cols-1 row-cols-md-2 g-4">
                 {filteredEventsWithSessions.length > 0 ? (
-                    filteredEventsWithSessions.map(({event, sessions}) => (
+                    filteredEventsWithSessions.map(({ event, sessions }) => (
                         <div key={event.id} className="col">
-                            <div
-                                className="container card bg-dark text-white w-100 h-100 d-flex flex-row event-card p-3">
-                                <div className="container position-relative me-1 image-container w-50" style={{
-                                    backgroundImage: `url(${event.image_url || '/images/1.jpg'})`,
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center',
-                                }}>
+                            <div className="container card bg-dark text-white w-100 h-100 d-flex flex-row event-card p-3">
+                                <div
+                                    className="container position-relative me-1 image-container w-50"
+                                    style={{
+                                        backgroundImage: `url(${event.image_url || '/images/1.jpg'})`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                    }}
+                                >
                                     <button
                                         className="btn btn-play position-absolute top-50 start-50 translate-middle"
                                         onClick={() => handleEventPlayClick(event, sessions)}
@@ -218,8 +217,7 @@ const EventList: React.FC<EventListProps> = ({selectedDate, currentView, current
                                     >
                                         <i className="bi bi-play-circle"></i>
                                     </button>
-                                    <div
-                                        className="position-absolute top-0 start-0 m-2 p-1 bg-danger text-white rounded w-auto h-auto">
+                                    <div className="position-absolute top-0 start-0 m-2 p-1 bg-danger text-white rounded w-auto h-auto">
                                         {event.age_restriction}
                                     </div>
                                 </div>
@@ -241,7 +239,9 @@ const EventList: React.FC<EventListProps> = ({selectedDate, currentView, current
                                                 <p className="session-price text-muted">
                                                     <strong>{session.price} ₽</strong>
                                                 </p>
-                                                <p className="session-seats text-muted"><strong>Комфорт</strong></p>
+                                                <p className="session-seats text-muted">
+                                                    <strong>Комфорт</strong>
+                                                </p>
                                             </div>
                                         ))}
 

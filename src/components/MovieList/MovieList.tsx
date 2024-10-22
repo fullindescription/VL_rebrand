@@ -4,8 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './MovieList.scss';
 import { format, parse } from 'date-fns';
 import SessionDetails from '../Session/SessionDetails.tsx';
-import MovieModal from "./MovieModal.tsx"; // Импортируем новое модальное окно
-import { Session } from '../Session/Session.ts'; // Импортируем тип Session
+import MovieModal from "./MovieModal.tsx";
+import { Session } from '../Session/Session.ts';
 
 type Movie = {
     id: number;
@@ -15,7 +15,7 @@ type Movie = {
     category_name: string;
     age_restriction: string;
     image_url: string | null;
-    video_url: string; // Для видео
+    video_url: string;
 };
 
 type MovieWithSessions = {
@@ -27,7 +27,7 @@ type MovieListProps = {
     selectedDate: string;
     currentView: string;
     currentFilter: string;
-    movieData: Movie[]; // Изменяем имя пропса на `movieData`
+    movieData: Movie[];
 };
 
 export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView, currentFilter }) => {
@@ -39,12 +39,10 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
     const [selectedSession, setSelectedSession] = useState<Session | null>(null);
     const [allSessions, setAllSessions] = useState<Session[]>([]);
 
-    // Новые состояния для второго модального окна
     const [showMovieModal, setShowMovieModal] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
     const [selectedMovieSessions, setSelectedMovieSessions] = useState<Session[]>([]);
 
-    // Получение уникальных жанров из фильмов и создание опций для Select
     const genreOptions = Array.from(new Set(moviesWithSessions.map(({ movie }) => movie.category_name))).map((genre) => ({
         label: genre.charAt(0).toUpperCase() + genre.slice(1).toLowerCase(),
         value: genre,
@@ -67,7 +65,6 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
         }
     };
 
-    // Логика для открытия нового модального окна при клике на кнопку play
     const handleMoviePlayClick = (movie: Movie, sessions: Session[]) => {
         setSelectedMovie(movie);
         setSelectedMovieSessions(sessions);
@@ -89,7 +86,8 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const url = `/api/events/getfilmsforday/?date=${selectedDate}&time=10:00`;
+                const currentTime = format(new Date(), 'HH:mm'); // Добавляем текущее время здесь
+                const url = `/api/events/getfilmsforday/?date=${selectedDate}&time=${currentTime}`;
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
@@ -135,10 +133,9 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
         return <p>{error}</p>;
     }
 
-    const currentTime = format(new Date(), 'HH:mm');
-
+    // Удалили фильтрацию по времени
     const filterFutureSessions = (sessions: Session[]) => {
-        return sessions.filter((session) => session.time < currentTime);
+        return sessions;
     };
 
     const formatSessionTime = (time: string) => {
@@ -164,7 +161,6 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
         return 'сеансов';
     };
 
-    // Фильтрация фильмов по выбранным жанрам
     const moviesToDisplay = selectedGenres.length > 0
         ? filteredMoviesWithSessions.filter(({ movie }) =>
             selectedGenres.some((genre) => movie.category_name.toLowerCase() === genre.toLowerCase())
@@ -175,7 +171,6 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
         <section className="container mt-5 mb-5">
             <h2 className="text-center mb-5">{currentView} в городе Владивосток</h2>
 
-            {/* Select для выбора жанра с поиском и поддержкой множественного выбора */}
             <div className="mb-4 d-flex align-items-center justify-content-start genre-select-container">
                 <label htmlFor="genreSelect" className="form-label genre-select-label me-3">
                     Выберите жанры:
@@ -198,7 +193,6 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
                     moviesToDisplay.map(({ movie, sessions }) => (
                         <div key={movie.id} className="col">
                             <div className="container card bg-dark text-white w-100 h-100 d-flex flex-row movie-card p-3">
-                                {/* Кнопка Play поверх изображения */}
                                 <div
                                     className="container position-relative me-1 image-container w-50"
                                     style={{
@@ -276,7 +270,6 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
                 )}
             </div>
 
-            {/* Модальное окно для сеансов */}
             <SessionDetails
                 show={showModal}
                 onHide={closeModal}
@@ -286,7 +279,6 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
                 isEvent={false}
             />
 
-            {/* Модальное окно для информации о фильме и сеансах */}
             <MovieModal
                 show={showMovieModal}
                 onHide={closeMovieModal}
@@ -294,7 +286,7 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
                 sessions={selectedMovieSessions}
                 onSelectSession={(session) => {
                     setSelectedSession(session);
-                    setShowModal(true); // Перенаправляем в окно выбора мест
+                    setShowModal(true);
                 }}
             />
         </section>

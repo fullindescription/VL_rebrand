@@ -18,7 +18,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setUsername }) => {
         const token = localStorage.getItem('access');
         if (storedUsername && token) {
             // Если пользователь уже вошел, перенаправляем на главную или другую защищённую страницу
-            navigate('/profile');
+            navigate('/home');
         }
     }, [navigate]);
 

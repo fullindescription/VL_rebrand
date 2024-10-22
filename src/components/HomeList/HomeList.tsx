@@ -64,9 +64,12 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const currentTime = format(new Date(), 'HH:mm'); // Получаем текущее время здесь
+
+                // Передаем текущее время в запросы к API
                 const [eventsResponse, moviesResponse] = await Promise.all([
-                    fetch(`/api/events/geteventsforday/?date=${selectedDate}&time=12:00`),
-                    fetch(`/api/events/getfilmsforday/?date=${selectedDate}&time=10:00`),
+                    fetch(`/api/events/geteventsforday/?date=${selectedDate}&time=${currentTime}`),
+                    fetch(`/api/events/getfilmsforday/?date=${selectedDate}&time=${currentTime}`),
                 ]);
 
                 if (eventsResponse.ok && moviesResponse.ok) {
@@ -102,9 +105,9 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
         fetchData();
     }, [selectedDate]);
 
-    const currentTime = format(new Date(), 'HH:mm');
+    // Убираем фильтрацию по времени
     const filterFutureSessions = (sessions: any[]) => {
-        return sessions.filter((session) => session.time > currentTime);
+        return sessions; // Возвращаем все сессии без фильтрации
     };
 
     const formatSessionTime = (time: string) => {
@@ -206,7 +209,7 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                                 onClick={() => handleSingleSessionClick(session, item)}
                                             >
                                                 <p className="session-time">
-                                                <strong>{formatSessionTime(session.time)}</strong>
+                                                    <strong>{formatSessionTime(session.time)}</strong>
                                                 </p>
                                                 <p className="session-price text-muted">
                                                     <strong>{session.price} ₽</strong>
