@@ -92,7 +92,7 @@ const SeatSelectionModal: React.FC<SeatSelectionModalProps> = ({
                                         style={{
                                             width: '30px',
                                             height: '30px',
-                                            backgroundColor: isSelected(row, seat) ? 'blue' : 'lightgray',
+                                            backgroundColor: isSelected(row, seat) ? 'lightgray' : 'blue',
                                             margin: '2px',
                                             cursor: isSeatDisabled ? 'not-allowed' : 'pointer',
                                         }}

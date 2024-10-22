@@ -1,0 +1,80 @@
+.home-card {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  background-color: #261d1d;
+  border-radius: 32px;
+}
+.home-card .container {
+  transition: transform 0.3s ease-in-out;
+}
+.home-card .image-container {
+  width: 227px;
+  border-radius: 7px;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease-in-out;
+}
+.home-card .image-container:hover {
+  transform: scale(1.05);
+}
+.home-card .card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.home-card .card-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+.home-card .card-category {
+  font-size: 16px;
+  color: #b0b0b0;
+}
+.home-card .card-duration {
+  font-size: 14px;
+  color: #999999;
+}
+.home-card .sessions {
+  display: flex;
+  gap: 10px;
+  margin-left: 0;
+}
+.home-card .session-tile-small {
+  width: 100px;
+  height: 120px;
+  border-radius: 8.25px;
+  background-color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.home-card .session-tile-small:hover {
+  transform: scale(1.05);
+}
+.home-card .session-time {
+  font-size: 20px;
+  color: white;
+}
+.home-card .session-price,
+.home-card .session-seats {
+  font-size: 14px;
+  color: #b0b0b0;
+}
+.home-card .session-more {
+  font-size: 16px;
+  color: white;
+}
+.home-card .sessionN {
+  width: 90%;
+}
+.home-card .sessionN:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease-in-out;
+}
+
+/*# sourceMappingURL=HomeList.css.map */

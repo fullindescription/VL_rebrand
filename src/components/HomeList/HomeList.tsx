@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
-import './EventList.scss';
 import { format, parse } from 'date-fns';
-import SessionDetails from '../Session/SessionDetails.tsx';
-import { Session } from '../Session/Session.ts';
-import { useNavigate } from 'react-router-dom';
+import './HomeList.scss';
+import SessionDetails from '../Session/SessionDetails.tsx'; // Подключение общих деталей сеанса
 
-interface Event {
+type EventOrMovie = {
     id: number;
     title: string;
     description: string;
@@ -16,52 +13,35 @@ interface Event {
     age_restriction: string;
     image_url: string | null;
     video_url: string | null;
-}
+    sessions: any[];
+};
 
-interface EventWithSessions {
-    event: Event;
-    sessions: Session[];
-}
-
-type EventListProps = {
+type HomeListProps = {
     selectedDate: string;
     currentView: string;
     currentFilter: string;
 };
 
-const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, currentFilter }) => {
-    const [eventsWithSessions, setEventsWithSessions] = useState<EventWithSessions[]>([]);
+const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [itemsWithSessions, setItemsWithSessions] = useState<EventOrMovie[]>([]);
     const [showModal, setShowModal] = useState(false);
-    const [selectedSession, setSelectedSession] = useState<Session | null>(null);
-    const [allSessions, setAllSessions] = useState<Session[]>([]);
-    const [selectedGenres, setSelectedGenres] = useState<string[]>([]); // Для выбранных жанров
-    const navigate = useNavigate();
+    const [selectedSession, setSelectedSession] = useState<any | null>(null);
+    const [allSessions, setAllSessions] = useState<any[]>([]);
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]); // Состояние для выбранных жанров
+    const [genreOptions, setGenreOptions] = useState<{ label: string; value: string }[]>([]); // Опции жанров
 
-    // Проверка авторизации
-    const checkAuthorization = () => {
-        const token = localStorage.getItem('access');
-        if (!token) {
-            alert('Пожалуйста, войдите в аккаунт, чтобы выбрать сеанс.');
-            navigate('/login'); // Перенаправляем на страницу логина, если пользователь не авторизован
-            return false;
-        }
-        return true;
-    };
-
-    const handleSingleSessionClick = (session: Session, movieTitle: string) => {
-        if (!checkAuthorization()) return; // Проверяем авторизацию перед выбором сеанса
-        setSelectedSession({ ...session, title: movieTitle });
+    const handleSingleSessionClick = (session: any, title: string) => {
+        setSelectedSession({ ...session, title });
         setShowModal(true);
     };
 
-    const handleAllSessionsClick = (sessions: Session[], movieTitle: string) => {
-        if (!checkAuthorization()) return; // Проверяем авторизацию перед выбором всех сеансов
+    const handleAllSessionsClick = (sessions: any[], title: string) => {
         if (sessions.length > 0) {
             const sessionsWithTitle = sessions.map((session) => ({
                 ...session,
-                title: movieTitle,
+                title,
             }));
             setAllSessions(sessionsWithTitle);
             setSelectedSession(null);
@@ -76,31 +56,38 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
     };
 
     useEffect(() => {
-        const fetchEvents = async () => {
+        const fetchData = async () => {
             try {
-                const url = `/api/events/geteventsforday/?date=${selectedDate}&time=12:00`;
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
+                const [eventsResponse, moviesResponse] = await Promise.all([
+                    fetch(`/api/events/geteventsforday/?date=${selectedDate}&time=12:00`),
+                    fetch(`/api/events/getfilmsforday/?date=${selectedDate}&time=10:00`),
+                ]);
 
-                if (response.ok) {
-                    const jsonData = await response.json();
-                    if (Array.isArray(jsonData.data)) {
-                        const normalizedData = jsonData.data.map((item: any) => ({
-                            event: item.event,
-                            sessions: item.sessions.map((session: any) => ({
-                                ...session,
-                                price: parseFloat(session.price),
-                                available_tickets: parseInt(session.available_tickets, 10),
-                            })),
+                if (eventsResponse.ok && moviesResponse.ok) {
+                    const eventsData = await eventsResponse.json();
+                    const moviesData = await moviesResponse.json();
+
+                    const normalizedEvents = (eventsData.data || []).map((item: any) => ({
+                        ...item.event,
+                        sessions: item.sessions,
+                    }));
+
+                    const normalizedMovies = (moviesData.data || []).map((item: any) => ({
+                        ...item.movie,
+                        sessions: item.sessions,
+                    }));
+
+                    const allItems = [...normalizedEvents, ...normalizedMovies];
+                    setItemsWithSessions(allItems);
+
+                    // Генерация уникальных жанров (категорий)
+                    const genreOptions = Array.from(new Set(allItems.map(({ category_name }) => category_name)))
+                        .map((genre) => ({
+                            label: genre.charAt(0).toUpperCase() + genre.slice(1).toLowerCase(),
+                            value: genre,
                         }));
-                        setEventsWithSessions(normalizedData);
-                    } else {
-                        setEventsWithSessions([]);
-                    }
+
+                    setGenreOptions(genreOptions);
                 } else {
                     setError('Ошибка при загрузке данных.');
                 }
@@ -111,17 +98,20 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
             }
         };
 
-        if (currentFilter === 'events') {
-            fetchEvents();
-        }
-    }, [selectedDate, currentFilter]);
+        fetchData();
+    }, [selectedDate]);
 
-    if (loading) return <p>Загрузка событий...</p>;
-    if (error) return <p>{error}</p>;
+    if (loading) {
+        return <p>Загрузка...</p>;
+    }
+
+    if (error) {
+        return <p>{error}</p>;
+    }
 
     const currentTime = format(new Date(), 'HH:mm');
 
-    const filterFutureSessions = (sessions: Session[]) => {
+    const filterFutureSessions = (sessions: any[]) => {
         return sessions.filter((session) => session.time > currentTime);
     };
 
@@ -130,20 +120,20 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
         return format(parsedTime, 'HH:mm');
     };
 
-    // Фильтрация событий по выбранным жанрам
-    const filteredEventsWithSessions = eventsWithSessions
-        .map((eventWithSessions) => {
+    // Фильтрация элементов по выбранным жанрам
+    const filteredItemsWithSessions = itemsWithSessions
+        .map((item) => {
             const futureSessions = filterFutureSessions(
-                eventWithSessions.sessions.filter((session) => session.date === selectedDate)
+                item.sessions.filter((session) => session.date === selectedDate)
             );
             return {
-                ...eventWithSessions,
+                ...item,
                 sessions: futureSessions,
             };
         })
-        .filter((eventWithSessions) =>
-            eventWithSessions.sessions.length > 0 &&
-            (selectedGenres.length === 0 || selectedGenres.includes(eventWithSessions.event.category_name))
+        .filter((item) =>
+            item.sessions.length > 0 &&
+            (selectedGenres.length === 0 || selectedGenres.includes(item.category_name))
         );
 
     const getMoviesLabel = (count: number) => {
@@ -152,14 +142,8 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
         return 'сеансов';
     };
 
-    // Выпадающий список с выбором жанров (категорий)
-    const genreOptions = Array.from(new Set(eventsWithSessions.map(({ event }) => event.category_name))).map((genre) => ({
-        label: genre.charAt(0).toUpperCase() + genre.slice(1).toLowerCase(),
-        value: genre,
-    }));
-
     return (
-        <section className="container mt-5 mb-5">
+        <section className="home-list container mt-5 mb-5">
             <h2 className="text-center mb-5">{currentView} в городе Владивосток</h2>
 
             {/* Выпадающий список для выбора жанров */}
@@ -182,32 +166,32 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
             </div>
 
             <div className="row row-cols-1 row-cols-md-2 g-4">
-                {filteredEventsWithSessions.length > 0 ? (
-                    filteredEventsWithSessions.map(({event, sessions}) => (
-                        <div key={event.id} className="col">
+                {filteredItemsWithSessions.length > 0 ? (
+                    filteredItemsWithSessions.map((item, index) => (
+                        <div key={`item-${item.id}-${index}`} className="col">
                             <div
-                                className="container card bg-dark text-white w-100 h-100 d-flex flex-row event-card p-3">
+                                className="container card bg-dark text-white w-100 h-100 d-flex flex-row home-card p-3">
                                 <div className="container position-relative me-1 image-container w-50" style={{
-                                    backgroundImage: `url(${event.image_url || '/images/1.jpg'})`,
+                                    backgroundImage: `url(${item.image_url || '/images/1.jpg'})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                 }}>
                                     <div
                                         className="position-absolute top-0 start-0 m-2 p-1 bg-danger text-white rounded w-auto h-auto">
-                                        {event.age_restriction}
+                                        {item.age_restriction}
                                     </div>
                                 </div>
                                 <div className="card-body d-flex flex-column">
                                     <div className="container w-auto">
-                                        <h3 className="card-title mb-1">{event.title}</h3>
-                                        <p className="card-category mt-3">{event.category_name}</p>
+                                        <h3 className="card-title mb-1">{item.title}</h3>
+                                        <p className="card-category mt-3">{item.category_name}</p>
                                     </div>
-                                    <div className="container d-flex flex-wrap gap-2 mt-1 ">
-                                        {sessions.slice(0, 1).map((session) => (
+                                    <div className="container d-flex flex-wrap gap-2 mt-1">
+                                        {item.sessions.slice(0, 1).map((session, sessionIndex) => (
                                             <div
-                                                key={session.id}
+                                                key={`${session.id}-${item.id}-${sessionIndex}`}
                                                 className="container bg-secondary text-center session-tile-small rounded"
-                                                onClick={() => handleSingleSessionClick(session, event.title)}
+                                                onClick={() => handleSingleSessionClick(session, item.title)}
                                             >
                                                 <p className="session-time">
                                                     <strong>{formatSessionTime(session.time)}</strong>
@@ -219,13 +203,14 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
                                             </div>
                                         ))}
 
-                                        {sessions.length > 1 && (
+                                        {item.sessions.length > 1 && (
                                             <div
                                                 className="container-fluid bg-secondary d-flex flex-column p-1 sessionN mt-1 text-center rounded"
-                                                onClick={() => handleAllSessionsClick(sessions, event.title)}
+                                                key={`session-more-${item.id}-${index}`}
+                                                onClick={() => handleAllSessionsClick(item.sessions, item.title)}
                                             >
                                                 <p className="mb-0">
-                                                    <strong>+{sessions.length - 1} {getMoviesLabel(sessions.length - 1)}</strong>
+                                                    <strong>+{item.sessions.length - 1} {getMoviesLabel(item.sessions.length - 1)}</strong>
                                                 </p>
                                             </div>
                                         )}
@@ -250,4 +235,4 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
     );
 };
 
-export default EventList;
+export default HomeList;

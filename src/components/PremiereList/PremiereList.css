@@ -1,0 +1,80 @@
+.premiere-card {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  background-color: #261d1d;
+  border-radius: 32px;
+}
+.premiere-card .container {
+  transition: transform 0.3s ease-in-out;
+}
+.premiere-card .image-container {
+  width: 227px;
+  border-radius: 7px;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease-in-out;
+}
+.premiere-card .image-container:hover {
+  transform: scale(1.05);
+}
+.premiere-card .card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.premiere-card .card-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+.premiere-card .card-category {
+  font-size: 16px;
+  color: #b0b0b0;
+}
+.premiere-card .card-duration {
+  font-size: 14px;
+  color: #999999;
+}
+.premiere-card .sessions {
+  display: flex;
+  gap: 10px;
+  margin-left: 0;
+}
+.premiere-card .session-tile-small {
+  width: 100px;
+  height: 120px;
+  border-radius: 8.25px;
+  background-color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.premiere-card .session-tile-small:hover {
+  transform: scale(1.05);
+}
+.premiere-card .session-time {
+  font-size: 20px;
+  color: white;
+}
+.premiere-card .session-price,
+.premiere-card .session-seats {
+  font-size: 14px;
+  color: #b0b0b0;
+}
+.premiere-card .session-more {
+  font-size: 16px;
+  color: white;
+}
+.premiere-card .sessionN {
+  width: 90%;
+}
+.premiere-card .sessionN:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease-in-out;
+}
+
+/*# sourceMappingURL=PremiereList.css.map */
