@@ -26,7 +26,7 @@ const App: React.FC = () => {
     const initialDate = localStorage.getItem('selectedDate') || format(new Date(), 'yyyy-MM-dd');
     const [selectedDate, setSelectedDate] = useState<string>(initialDate);
     const [currentView, setCurrentView] = useState<string>('Афиша');
-    const [currentFilter, setCurrentFilter] = useState<string>('movies');
+    const [currentFilter, setCurrentFilter] = useState<string>('home');
     const [movieData, setMovieData] = useState<Movie[]>([]);
 
     // Обновляем заголовок в зависимости от выбранной даты и фильтра
@@ -49,6 +49,7 @@ const App: React.FC = () => {
             } else {
                 setCurrentView(`События на ${formattedDate}`);
             }
+            window.location.pathname;
         } else if (filter === 'movies') {
             if (date === format(new Date(), 'yyyy-MM-dd')) {
                 setCurrentView('Фильмы на сегодня');
@@ -57,6 +58,7 @@ const App: React.FC = () => {
             } else {
                 setCurrentView(`Фильмы на ${formattedDate}`);
             }
+            window.location.pathname;
         } else if (filter === 'premiere') {
             setCurrentView('Премьера'); // Фиксированный заголовок для премьеры
         } else {
