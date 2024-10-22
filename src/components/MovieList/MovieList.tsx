@@ -234,7 +234,7 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
                                         <p className="card-category mt-3">{movie.category_name}</p>
                                     </div>
                                     <div className="container d-flex flex-wrap gap-2 mt-1 ">
-                                        {sessions.slice(0, 1).map((session) => (
+                                        {sessions.slice(0, 2).map((session) => (
                                             <div
                                                 key={session.id}
                                                 className="container bg-secondary text-center session-tile-small rounded"
@@ -250,13 +250,13 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
                                             </div>
                                         ))}
 
-                                        {sessions.length > 1 && (
+                                        {sessions.length > 2 && (
                                             <div
                                                 className="container-fluid bg-secondary d-flex flex-column p-1 sessionN mt-1 text-center rounded"
                                                 onClick={() => handleAllSessionsClick(sessions, movie.title)}
                                             >
                                                 <p className="mb-0">
-                                                    <strong>+{sessions.length - 1} {getMoviesLabel(sessions.length - 1)}</strong>
+                                                    <strong>+{sessions.length - 2} {getMoviesLabel(sessions.length - 2)}</strong>
                                                 </p>
                                             </div>
                                         )}

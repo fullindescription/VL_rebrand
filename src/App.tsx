@@ -11,30 +11,29 @@ import ScrollToTop from './components/UI-Kit/Outer UI/ScrollToTop.tsx';
 import CartPage from './pages/Cart/CartPage.tsx';
 import { CartProvider } from './pages/Cart/CartContext.tsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { format, parse, addDays } from 'date-fns';
+import { format, addDays, parse } from 'date-fns';
 import EventList from './components/EventList/EventList.tsx';
-import { ru } from 'date-fns/locale';
 import { Movie } from './components/MovieList/Movie.ts';
 import PremiereList from './components/PremiereList/PremiereList.tsx';
 import HomeList from './components/HomeList/HomeList.tsx';
+import { ru } from 'date-fns/locale';
 
 const App: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
     const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
-
-    // Используем сохранённую дату из localStorage или "сегодня", если её нет
     const initialDate = localStorage.getItem('selectedDate') || format(new Date(), 'yyyy-MM-dd');
     const [selectedDate, setSelectedDate] = useState<string>(initialDate);
     const [currentView, setCurrentView] = useState<string>('Афиша');
     const [currentFilter, setCurrentFilter] = useState<string>('movies');
     const [movieData, setMovieData] = useState<Movie[]>([]);
 
-    const updateViewTitle = (date: string, isHome: boolean, isEventsPage: boolean, isMoviesPage: boolean) => {
+    // Обновляем заголовок в зависимости от выбранной даты и фильтра
+    const updateViewTitle = (date: string, filter: string) => {
         const formattedDate = format(parse(date, 'yyyy-MM-dd', new Date()), 'dd MMMM yyyy', { locale: ru });
 
-        if (isHome) {
+        if (filter === 'home') {
             if (date === format(new Date(), 'yyyy-MM-dd')) {
                 setCurrentView('Афиша на сегодня');
             } else if (date === format(addDays(new Date(), 1), 'yyyy-MM-dd')) {
@@ -42,7 +41,7 @@ const App: React.FC = () => {
             } else {
                 setCurrentView(`Афиша на ${formattedDate}`);
             }
-        } else if (isEventsPage) {
+        } else if (filter === 'events') {
             if (date === format(new Date(), 'yyyy-MM-dd')) {
                 setCurrentView('События на сегодня');
             } else if (date === format(addDays(new Date(), 1), 'yyyy-MM-dd')) {
@@ -50,7 +49,7 @@ const App: React.FC = () => {
             } else {
                 setCurrentView(`События на ${formattedDate}`);
             }
-        } else if (isMoviesPage) {
+        } else if (filter === 'movies') {
             if (date === format(new Date(), 'yyyy-MM-dd')) {
                 setCurrentView('Фильмы на сегодня');
             } else if (date === format(addDays(new Date(), 1), 'yyyy-MM-dd')) {
@@ -58,29 +57,25 @@ const App: React.FC = () => {
             } else {
                 setCurrentView(`Фильмы на ${formattedDate}`);
             }
+        } else if (filter === 'premiere') {
+            setCurrentView('Премьера'); // Фиксированный заголовок для премьеры
         } else {
             setCurrentView(`Афиша на ${formattedDate}`);
         }
     };
 
-    const isHome = location.pathname === '/home';
-    const isEventsPage = location.pathname === '/events';
-    const isMoviesPage = location.pathname === '/movies';
-    const isLoginPage = location.pathname === '/login';
-    const isRegisterPage = location.pathname === '/register';
+
+
 
     useEffect(() => {
-        // Сохранение выбранной даты в localStorage
         localStorage.setItem('selectedDate', selectedDate);
     }, [selectedDate]);
 
     useEffect(() => {
-        // Обновление заголовка при переходе на указанные страницы
-        updateViewTitle(selectedDate, isHome, isEventsPage, isMoviesPage);
-    }, [location.pathname, isHome, isEventsPage, isMoviesPage, selectedDate, currentFilter]);
+        updateViewTitle(selectedDate, currentFilter);
+    }, [location.pathname, selectedDate, currentFilter]);
 
     useEffect(() => {
-        // Обновление username в localStorage, если он изменился
         if (username) {
             localStorage.setItem('username', username);
         }
@@ -106,7 +101,6 @@ const App: React.FC = () => {
         }
     };
 
-    // Функция для проверки авторизации
     const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
         useEffect(() => {
             if (!username) {
@@ -120,8 +114,7 @@ const App: React.FC = () => {
     return (
         <CartProvider>
             <div className="App">
-                {/* Убираем Header на страницах входа и регистрации */}
-                {!isLoginPage && !isRegisterPage && (
+                {!location.pathname.includes('/login') && !location.pathname.includes('/register') && (
                     <Header
                         title="VL.RU"
                         username={username}
@@ -133,41 +126,41 @@ const App: React.FC = () => {
                         setMovieData={setMovieData}
                         handleTodayClick={handleTodayClick}
                         handleTomorrowClick={handleTomorrowClick}
-                        updateViewTitle={(date) => updateViewTitle(date, isHome, isEventsPage, isMoviesPage)}
+                        updateViewTitle={updateViewTitle} // Передаем updateViewTitle
                         currentFilter={currentFilter}
                         handleDateChange={handleDateChange}
                     />
                 )}
                 <Routes>
                     <Route path="/" element={<Navigate to="/home" />} />
-                    <Route path="/register" element={<><RegisterPage setUsername={setUsername}/><Footer/></>}/>
-                    <Route path="/login" element={<><LoginPage setUsername={setUsername}/><Footer/></>}/>
-                    <Route path="/profile" element={<><ProfilePage/><Footer/></>} />
-                    <Route path="/cart" element={<ProtectedRoute element={<><CartPage/><Footer/></>} />} />
+                    <Route path="/register" element={<><RegisterPage setUsername={setUsername} /><Footer /></>} />
+                    <Route path="/login" element={<><LoginPage setUsername={setUsername} /><Footer /></>} />
+                    <Route path="/profile" element={<><ProfilePage /><Footer /></>} />
+                    <Route path="/cart" element={<ProtectedRoute element={<><CartPage /><Footer /></>} />} />
                     <Route path="/events" element={<>
-                        <main id="events-content"><MovieCarousel/><EventList selectedDate={selectedDate}
-                                                                             currentView={currentView}
-                                                                             currentFilter="events"/></main>
-                        <Footer/></>} />
+                        <main id="events-content"><MovieCarousel /><EventList selectedDate={selectedDate}
+                                                                              currentView={currentView}
+                                                                              currentFilter="events" /></main>
+                        <Footer /></>} />
                     <Route path="/movies" element={<>
-                        <main id="movies-content"><MovieCarousel/><MovieList selectedDate={selectedDate}
-                                                                             currentView={currentView}
-                                                                             currentFilter="movies"
-                                                                             movieData={movieData}
+                        <main id="movies-content"><MovieCarousel /><MovieList selectedDate={selectedDate}
+                                                                              currentView={currentView}
+                                                                              currentFilter="movies"
+                                                                              movieData={movieData}
                         /></main>
-                        <Footer/></>} />
+                        <Footer /></>} />
                     <Route path="/premiere" element={<>
-                        <main id="premiere-content"><MovieCarousel/><PremiereList
+                        <main id="premiere-content"><MovieCarousel /><PremiereList
                             currentView={currentView}
-                            currentFilter="premiere"/></main>
-                        <Footer/></>} />
+                            currentFilter="premiere" /></main>
+                        <Footer /></>} />
                     <Route path="/home" element={<>
-                        <main id="main-content"><MovieCarousel/><HomeList selectedDate={selectedDate}
-                                                                          currentView={currentView}
+                        <main id="main-content"><MovieCarousel /><HomeList selectedDate={selectedDate}
+                                                                           currentView={currentView}
                         /></main>
-                        <Footer/></>} />
+                        <Footer /></>} />
                 </Routes>
-                <ScrollToTop/>
+                <ScrollToTop />
             </div>
         </CartProvider>
     );

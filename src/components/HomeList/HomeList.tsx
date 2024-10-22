@@ -46,6 +46,13 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
         setShowSessionDetails(true);
     };
 
+    const handleAllSessionsClick = (sessions: any[], title: string) => {
+        setAllSessions(sessions);
+        console.log("Title:", title); // Или используйте `title` в логике
+        setShowHomeModal(true);
+    };
+
+
     // Закрытие модального окна для описания
     const closeHomeModal = () => {
         setShowHomeModal(false);
@@ -130,6 +137,12 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
             (selectedGenres.length === 0 || selectedGenres.includes(item.category_name))
         );
 
+    const getMoviesLabel = (count: number) => {
+        if (count === 1) return 'сеанс';
+        if (count >= 2 && count <= 4) return 'сеанса';
+        return 'сеансов';
+    };
+
     return (
         <section className="home-list container mt-5 mb-5">
             <h2 className="text-center mb-5">{currentView} в городе Владивосток</h2>
@@ -202,7 +215,7 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                         <p className="card-category mt-3">{item.category_name}</p>
                                     </div>
                                     <div className="container d-flex flex-wrap gap-2 mt-1">
-                                        {item.sessions.slice(0, 1).map((session) => (
+                                        {item.sessions.slice(0, 2).map((session) => (
                                             <div
                                                 key={session.id}
                                                 className="container bg-secondary text-center session-tile-small rounded"
@@ -217,6 +230,16 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                                 <p className="session-seats text-muted"><strong>Комфорт</strong></p>
                                             </div>
                                         ))}
+                                        {item.sessions.length > 2 && (
+                                            <div
+                                                className="container-fluid bg-secondary d-flex flex-column p-1 sessionN mt-1 text-center rounded"
+                                                onClick={() => handleAllSessionsClick(item.sessions, item.title)}
+                                            >
+                                                <p className="mb-0">
+                                                    <strong>+{item.sessions.length - 2} {getMoviesLabel(item.sessions.length - 2)}</strong>
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
