@@ -48,15 +48,15 @@ const ProfilePage: React.FC = () => {
     };
 
     return (
-        <div className="container"> {/* Добавляем отступ для фиксированного header */}
+        <div className="container">
             <div className="row justify-content-center align-items-center vh-100">
                 <div className="col-md-6 col-lg-4">
-                    <div className="card shadow-lg p-4" style={{ borderRadius: '10px' }}> {/* Карточка с тенью */}
+                    <div className="card shadow-lg p-4" style={{ borderRadius: '10px' }}>
                         {user.username ? (
                             <>
                                 <h2 className="text-center mb-4">Профиль пользователя</h2>
                                 <div className="text-center mb-3">
-                                    <i className="fas fa-user-circle fa-5x text-secondary"></i> {/* Иконка профиля */}
+                                    <i className="fas fa-user-circle fa-5x text-secondary"></i>
                                 </div>
                                 <ul className="list-group list-group-flush">
                                     <li className="list-group-item"><strong>Имя:</strong> {user.firstName || 'Не указано'}</li>
@@ -64,7 +64,6 @@ const ProfilePage: React.FC = () => {
                                     <li className="list-group-item"><strong>Username:</strong> {user.username}</li>
                                     <li className="list-group-item"><strong>Email:</strong> {user.email || 'Не указано'}</li>
                                 </ul>
-                                {/* Кнопка выхода из аккаунта */}
                                 <div className="d-grid gap-2 mt-4">
                                     <button className="btn btn-danger" onClick={handleLogout}>
                                         Выйти из аккаунта

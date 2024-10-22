@@ -45,8 +45,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ setUsername }) => {
                 // Обновляем состояние с username
                 setUsername(data.username);
 
-                // Перенаправляем пользователя на страницу профиля
-                navigate('/profile');
+                // Перенаправляем пользователя на страницу профиля после полной записи данных
+                navigate('/login');
             } else {
                 const data = await response.json();
                 setError(data.detail || 'Ошибка при регистрации');
