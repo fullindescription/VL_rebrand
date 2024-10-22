@@ -60,11 +60,6 @@ class MovieService:
 
     @staticmethod
     def get_all_premier_movies():
-        cache_key = "all_premier_movies"
-
-        cached_response = cache.get(cache_key)
-        if cached_response:
-            return {"message": "Data retrieved from cache.", "data": cached_response}
 
         sessions = MoviePremierSession.objects.all()
         movie_ids = sessions.values_list('movie_id', flat=True).distinct()
@@ -80,7 +75,6 @@ class MovieService:
                 "sessions": session_serializer.data
             })
 
-        cache.set(cache_key, response_data, 60 * 15)
         return response_data
 
     @staticmethod
