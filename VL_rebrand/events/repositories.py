@@ -75,16 +75,23 @@ class MovieSessionRepository:
     def get_sessions_for_day(date, time=None):
         today = datetime.now().date()
 
+        # Преобразуем строку времени в объект time, если передан параметр time
+        if time:
+            try:
+                time = datetime.strptime(time, '%H:%M').time()
+            except ValueError:
+                raise ValueError("Invalid time format. Please use HH:MM.")
 
+        # Проверяем, является ли дата сегодняшней
         if date == today:
             current_time = datetime.now().time()
             if time:
+                # Фильтруем по времени, исключая прошедшие сеансы
                 return MovieSession.objects.filter(date=date, time__gt=max(time, current_time))
             return MovieSession.objects.filter(date=date, time__gt=current_time)
         else:
-
-            if time:
-                return MovieSession.objects.filter(date=date)
+            # Для будущих дней игнорируем параметр времени и выводим все сеансы
+            return MovieSession.objects.filter(date=date)
 
 class MoviePremierSessionRepository:
     @staticmethod
