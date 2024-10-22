@@ -33,17 +33,6 @@ const SessionDetails: React.FC<SessionDetailsProps> = ({
     const [ticketQuantity, setTicketQuantity] = useState(1);
     const navigate = useNavigate();
 
-    // Проверка авторизации
-    const checkAuthorization = () => {
-        const token = localStorage.getItem('access');
-        if (!token) {
-            alert('Пожалуйста, войдите в аккаунт, чтобы купить билет.');
-            navigate('/login');
-            return false;
-        }
-        return true;
-    };
-
     // Обработчик для изменения количества билетов
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value, 10);
@@ -53,8 +42,15 @@ const SessionDetails: React.FC<SessionDetailsProps> = ({
     };
 
     // Обработчик для добавления события в корзину
+    // Обработчик для добавления события в корзину
     const handleAddToCartForEvent = () => {
-        if (!checkAuthorization()) return;
+        const token = localStorage.getItem('access');
+
+        if (!token) {
+            // Если токена нет, перенаправляем на страницу входа
+            navigate('/login');
+            return;
+        }
 
         if (selectedSession) {
             addToCart({
@@ -70,13 +66,20 @@ const SessionDetails: React.FC<SessionDetailsProps> = ({
         }
     };
 
-    // Обработчик для выбора мест (только для фильмов)
+// Обработчик для выбора мест (только для фильмов)
     const handleSelectSeats = (session: Session) => {
-        if (!checkAuthorization()) return;
+        const token = localStorage.getItem('access');
+
+        if (!token) {
+            // Если токена нет, перенаправляем на страницу входа
+            navigate('/login');
+            return;
+        }
 
         setSelectedSession(session);
         setShowSeatSelection(true);
     };
+
 
     return (
         <>

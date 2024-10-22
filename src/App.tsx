@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
-import Header from './components/UI-Kit/Main UI/Header.tsx';
+import Header from './components/UI-Kit/Main UI/Header/Header.tsx';
 import MovieCarousel from './components/MovieCarousel/MovieCarousel';
 import { MovieList } from './components/MovieList/MovieList';
-import Footer from './components/UI-Kit/Main UI/Footer.tsx';
+import Footer from './components/UI-Kit/Main UI/Footer/Footer.tsx';
 import LoginPage from './pages/Profile&Register/LoginPage.tsx';
 import RegisterPage from './pages/Profile&Register/RegisterPage.tsx';
 import ProfilePage from './pages/Profile&Register/ProfilePage.tsx';
@@ -135,30 +135,30 @@ const App: React.FC = () => {
                     <Route path="/" element={<Navigate to="/home" />} />
                     <Route path="/register" element={<><RegisterPage setUsername={setUsername}/><Footer/></>}/>
                     <Route path="/login" element={<><LoginPage setUsername={setUsername}/><Footer/></>}/>
-                    <Route path="/profile" element={<ProtectedRoute element={<><ProfilePage/><Footer/></>} />} />
+                    <Route path="/profile" element={<><ProfilePage/><Footer/></>} />
                     <Route path="/cart" element={<ProtectedRoute element={<><CartPage/><Footer/></>} />} />
-                    <Route path="/events" element={<ProtectedRoute element={<>
+                    <Route path="/events" element={<>
                         <main id="events-content"><MovieCarousel/><EventList selectedDate={selectedDate}
                                                                              currentView={currentView}
                                                                              currentFilter="events"/></main>
-                        <Footer/></>} />} />
-                    <Route path="/movies" element={<ProtectedRoute element={<>
+                        <Footer/></>} />
+                    <Route path="/movies" element={<>
                         <main id="movies-content"><MovieCarousel/><MovieList selectedDate={selectedDate}
                                                                              currentView={currentView}
                                                                              currentFilter="movies"
                                                                              movieData={movieData}
                         /></main>
-                        <Footer/></>} />} />
-                    <Route path="/premiere" element={<ProtectedRoute element={<>
+                        <Footer/></>} />
+                    <Route path="/premiere" element={<>
                         <main id="premiere-content"><MovieCarousel/><PremiereList
                             currentView={currentView}
                             currentFilter="premiere"/></main>
-                        <Footer/></>} />} />
-                    <Route path="/home" element={<ProtectedRoute element={<>
+                        <Footer/></>} />
+                    <Route path="/home" element={<>
                         <main id="main-content"><MovieCarousel/><HomeList selectedDate={selectedDate}
                                                                           currentView={currentView}
-                                                                          /></main>
-                        <Footer/></>} />} />
+                        /></main>
+                        <Footer/></>} />
                 </Routes>
                 <ScrollToTop/>
             </div>
