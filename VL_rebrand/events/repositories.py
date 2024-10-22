@@ -50,8 +50,7 @@ class EventSessionRepository:
             return EventSession.objects.filter(date=date, time__gt=current_time)
         else:
             if time:
-                return EventSession.objects.filter(date=date, time__gt=time)
-            return EventSession.objects.filter(date=date)
+                return EventSession.objects.filter(date=date)
 
 
 class MovieRepository:
@@ -85,8 +84,7 @@ class MovieSessionRepository:
         else:
 
             if time:
-                return MovieSession.objects.filter(date=date, time__gt=time)
-            return MovieSession.objects.filter(date=date)
+                return MovieSession.objects.filter(date=date)
 
 class MoviePremierSessionRepository:
     @staticmethod
