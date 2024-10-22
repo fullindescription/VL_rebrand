@@ -41,9 +41,17 @@ class EventSessionRepository:
 
     @staticmethod
     def get_sessions_for_day(date, time=None):
-        if time:
-            return EventSession.objects.filter(date=date, time__gt=time)
-        return EventSession.objects.filter(date=date)
+        today = datetime.now().date()
+
+        if date == today:
+            current_time = datetime.now().time()
+            if time:
+                return EventSession.objects.filter(date=date, time__gt=max(time, current_time))
+            return EventSession.objects.filter(date=date, time__gt=current_time)
+        else:
+            if time:
+                return EventSession.objects.filter(date=date, time__gt=time)
+            return EventSession.objects.filter(date=date)
 
 
 class MovieRepository:
@@ -66,9 +74,19 @@ class MovieSessionRepository:
 
     @staticmethod
     def get_sessions_for_day(date, time=None):
-        if time:
-            return MovieSession.objects.filter(date=date, time__gt=time)
-        return MovieSession.objects.filter(date=date)
+        today = datetime.now().date()
+
+
+        if date == today:
+            current_time = datetime.now().time()
+            if time:
+                return MovieSession.objects.filter(date=date, time__gt=max(time, current_time))
+            return MovieSession.objects.filter(date=date, time__gt=current_time)
+        else:
+
+            if time:
+                return MovieSession.objects.filter(date=date, time__gt=time)
+            return MovieSession.objects.filter(date=date)
 
 class MoviePremierSessionRepository:
     @staticmethod
