@@ -15,6 +15,8 @@ const CartPage: React.FC = () => {
 
     // Добавляем функцию handlePurchase для обработки покупки
     const handlePurchase = async () => {
+        const token = localStorage.getItem('access');
+
         try {
             const sessionsToUpdate = cart.reduce<{
                 sessionId: number;
@@ -22,19 +24,20 @@ const CartPage: React.FC = () => {
             }[]>((acc, session) => {
                 const existing = acc.find((s) => s.sessionId === session.id);
                 if (existing) {
-                    existing.seats.push({row: session.row!, seat: session.seat!});
+                    existing.seats.push({ row: session.row!, seat: session.seat! });
                 } else {
                     acc.push({
                         sessionId: session.id,
-                        seats: [{row: session.row!, seat: session.seat!}],
+                        seats: [{ row: session.row!, seat: session.seat! }],
                     });
                 }
                 return acc;
             }, []);
 
-            const response = await fetch('/api/events/update-tickets', {
+            const response = await fetch('/api/events/cart/add_or_update_cartitem/', {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${token}`,  // Передаем токен в заголовке
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({

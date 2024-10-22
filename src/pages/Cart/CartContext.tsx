@@ -54,9 +54,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setError(null); // Сбрасываем ошибку, если добавление прошло успешно
     };
 
-
-
-
     const removeFromCart = (sessionId: number, row?: number, seat?: number) => {
         setCart((prevCart) =>
             prevCart

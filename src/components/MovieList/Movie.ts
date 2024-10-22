@@ -7,5 +7,5 @@ export type Movie = {
     category_name: string;
     age_restriction: string;
     image_url: string | null;
-    video_url?: string | null;
+    video_url: string;
 };

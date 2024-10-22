@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { format, parse } from 'date-fns';
 import { useCart } from '../../pages/Cart/CartContext.tsx';
-import SeatSelectionModal from "./SeatSelectionModal.tsx";
-import { Session } from './Session.ts'; // Импортируем тип
+import SeatSelectionModal from './SeatSelectionModal.tsx';
+import { Session } from './Session.ts';
 import { useNavigate } from 'react-router-dom';
 
 type SessionDetailsProps = {
@@ -33,6 +33,17 @@ const SessionDetails: React.FC<SessionDetailsProps> = ({
     const [ticketQuantity, setTicketQuantity] = useState(1);
     const navigate = useNavigate();
 
+    // Проверка авторизации
+    const checkAuthorization = () => {
+        const token = localStorage.getItem('access');
+        if (!token) {
+            alert('Пожалуйста, войдите в аккаунт, чтобы купить билет.');
+            navigate('/login');
+            return false;
+        }
+        return true;
+    };
+
     // Обработчик для изменения количества билетов
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value, 10);
@@ -41,8 +52,10 @@ const SessionDetails: React.FC<SessionDetailsProps> = ({
         }
     };
 
-    // Обработчик для добавления события (с выбором количества) в корзину и перехода в корзину
+    // Обработчик для добавления события в корзину
     const handleAddToCartForEvent = () => {
+        if (!checkAuthorization()) return;
+
         if (selectedSession) {
             addToCart({
                 id: selectedSession.id,
@@ -50,17 +63,18 @@ const SessionDetails: React.FC<SessionDetailsProps> = ({
                 time: selectedSession.time,
                 price: selectedSession.price,
                 available_tickets: selectedSession.available_tickets,
-                quantity: ticketQuantity // Добавляем правильное количество
+                quantity: ticketQuantity,
             });
             onHide();
             navigate('/cart');
         }
     };
 
-
     // Обработчик для выбора мест (только для фильмов)
     const handleSelectSeats = (session: Session) => {
-        setSelectedSession(session); // Устанавливаем выбранный сеанс
+        if (!checkAuthorization()) return;
+
+        setSelectedSession(session);
         setShowSeatSelection(true);
     };
 
@@ -144,11 +158,11 @@ const SessionDetails: React.FC<SessionDetailsProps> = ({
                                 row: seat.row,
                                 seat: seat.seat,
                                 available_tickets: selectedSession.available_tickets,
-                                quantity: 1 // Количество при выборе мест
+                                quantity: 1,
                             });
                         });
                         setShowSeatSelection(false);
-                        navigate('/cart'); // Перенаправление в корзину
+                        navigate('/cart');
                     }}
                 />
             )}

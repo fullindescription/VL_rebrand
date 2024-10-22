@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Select from 'react-select';
 import { format, parse } from 'date-fns';
 import './HomeList.scss';
 import SessionDetails from '../Session/SessionDetails.tsx'; // Подключение общих деталей сеанса
@@ -28,6 +29,8 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedSession, setSelectedSession] = useState<any | null>(null);
     const [allSessions, setAllSessions] = useState<any[]>([]);
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]); // Состояние для выбранных жанров
+    const [genreOptions, setGenreOptions] = useState<{ label: string; value: string }[]>([]); // Опции жанров
 
     const handleSingleSessionClick = (session: any, title: string) => {
         setSelectedSession({ ...session, title });
@@ -74,7 +77,17 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                         sessions: item.sessions,
                     }));
 
-                    setItemsWithSessions([...normalizedEvents, ...normalizedMovies]);
+                    const allItems = [...normalizedEvents, ...normalizedMovies];
+                    setItemsWithSessions(allItems);
+
+                    // Генерация уникальных жанров (категорий)
+                    const genreOptions = Array.from(new Set(allItems.map(({ category_name }) => category_name)))
+                        .map((genre) => ({
+                            label: genre.charAt(0).toUpperCase() + genre.slice(1).toLowerCase(),
+                            value: genre,
+                        }));
+
+                    setGenreOptions(genreOptions);
                 } else {
                     setError('Ошибка при загрузке данных.');
                 }
@@ -107,6 +120,7 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
         return format(parsedTime, 'HH:mm');
     };
 
+    // Фильтрация элементов по выбранным жанрам
     const filteredItemsWithSessions = itemsWithSessions
         .map((item) => {
             const futureSessions = filterFutureSessions(
@@ -117,7 +131,10 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                 sessions: futureSessions,
             };
         })
-        .filter((item) => item.sessions.length > 0);
+        .filter((item) =>
+            item.sessions.length > 0 &&
+            (selectedGenres.length === 0 || selectedGenres.includes(item.category_name))
+        );
 
     const getMoviesLabel = (count: number) => {
         if (count === 1) return 'сеанс';
@@ -128,6 +145,26 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
     return (
         <section className="home-list container mt-5 mb-5">
             <h2 className="text-center mb-5">{currentView} в городе Владивосток</h2>
+
+            {/* Выпадающий список для выбора жанров */}
+            <div className="mb-4 d-flex align-items-center justify-content-start genre-select-container">
+                <label htmlFor="genreSelect" className="form-label genre-select-label me-3">
+                    Выберите жанры:
+                </label>
+                <Select
+                    id="genreSelect"
+                    className="genre-select-dropdown flex-grow-1"
+                    classNamePrefix="genre-select"
+                    options={genreOptions}
+                    placeholder="Выберите жанры..."
+                    isMulti
+                    isClearable
+                    onChange={(selectedOptions) =>
+                        setSelectedGenres(selectedOptions ? selectedOptions.map((option) => option.value) : [])
+                    }
+                />
+            </div>
+
             <div className="row row-cols-1 row-cols-md-2 g-4">
                 {filteredItemsWithSessions.length > 0 ? (
                     filteredItemsWithSessions.map((item, index) => (

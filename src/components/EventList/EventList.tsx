@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Select from 'react-select';
 import './EventList.scss';
 import { format, parse } from 'date-fns';
 import SessionDetails from '../Session/SessionDetails.tsx';
 import { Session } from '../Session/Session.ts';
+import { useNavigate } from 'react-router-dom';
 
 interface Event {
     id: number;
@@ -34,13 +36,28 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
     const [showModal, setShowModal] = useState(false);
     const [selectedSession, setSelectedSession] = useState<Session | null>(null);
     const [allSessions, setAllSessions] = useState<Session[]>([]);
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]); // Для выбранных жанров
+    const navigate = useNavigate();
+
+    // Проверка авторизации
+    const checkAuthorization = () => {
+        const token = localStorage.getItem('access');
+        if (!token) {
+            alert('Пожалуйста, войдите в аккаунт, чтобы выбрать сеанс.');
+            navigate('/login'); // Перенаправляем на страницу логина, если пользователь не авторизован
+            return false;
+        }
+        return true;
+    };
 
     const handleSingleSessionClick = (session: Session, movieTitle: string) => {
+        if (!checkAuthorization()) return; // Проверяем авторизацию перед выбором сеанса
         setSelectedSession({ ...session, title: movieTitle });
         setShowModal(true);
     };
 
     const handleAllSessionsClick = (sessions: Session[], movieTitle: string) => {
+        if (!checkAuthorization()) return; // Проверяем авторизацию перед выбором всех сеансов
         if (sessions.length > 0) {
             const sessionsWithTitle = sessions.map((session) => ({
                 ...session,
@@ -113,6 +130,7 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
         return format(parsedTime, 'HH:mm');
     };
 
+    // Фильтрация событий по выбранным жанрам
     const filteredEventsWithSessions = eventsWithSessions
         .map((eventWithSessions) => {
             const futureSessions = filterFutureSessions(
@@ -123,7 +141,10 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
                 sessions: futureSessions,
             };
         })
-        .filter((eventWithSessions) => eventWithSessions.sessions.length > 0);
+        .filter((eventWithSessions) =>
+            eventWithSessions.sessions.length > 0 &&
+            (selectedGenres.length === 0 || selectedGenres.includes(eventWithSessions.event.category_name))
+        );
 
     const getMoviesLabel = (count: number) => {
         if (count === 1) return 'сеанс';
@@ -131,20 +152,48 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
         return 'сеансов';
     };
 
+    // Выпадающий список с выбором жанров (категорий)
+    const genreOptions = Array.from(new Set(eventsWithSessions.map(({ event }) => event.category_name))).map((genre) => ({
+        label: genre.charAt(0).toUpperCase() + genre.slice(1).toLowerCase(),
+        value: genre,
+    }));
+
     return (
         <section className="container mt-5 mb-5">
             <h2 className="text-center mb-5">{currentView} в городе Владивосток</h2>
+
+            {/* Выпадающий список для выбора жанров */}
+            <div className="mb-4 d-flex align-items-center justify-content-start genre-select-container">
+                <label htmlFor="genreSelect" className="form-label genre-select-label me-3">
+                    Выберите жанры:
+                </label>
+                <Select
+                    id="genreSelect"
+                    className="genre-select-dropdown flex-grow-1"
+                    classNamePrefix="genre-select"
+                    options={genreOptions}
+                    placeholder="Выберите жанры..."
+                    isMulti
+                    isClearable
+                    onChange={(selectedOptions) =>
+                        setSelectedGenres(selectedOptions ? selectedOptions.map((option) => option.value) : [])
+                    }
+                />
+            </div>
+
             <div className="row row-cols-1 row-cols-md-2 g-4">
                 {filteredEventsWithSessions.length > 0 ? (
-                    filteredEventsWithSessions.map(({ event, sessions }) => (
+                    filteredEventsWithSessions.map(({event, sessions}) => (
                         <div key={event.id} className="col">
-                            <div className="container card bg-dark text-white w-100 h-100 d-flex flex-row event-card p-3">
+                            <div
+                                className="container card bg-dark text-white w-100 h-100 d-flex flex-row event-card p-3">
                                 <div className="container position-relative me-1 image-container w-50" style={{
                                     backgroundImage: `url(${event.image_url || '/images/1.jpg'})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                 }}>
-                                    <div className="position-absolute top-0 start-0 m-2 p-1 bg-danger text-white rounded w-auto h-auto">
+                                    <div
+                                        className="position-absolute top-0 start-0 m-2 p-1 bg-danger text-white rounded w-auto h-auto">
                                         {event.age_restriction}
                                     </div>
                                 </div>
@@ -195,7 +244,7 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
                 allSessions={allSessions.length ? allSessions : selectedSession ? [selectedSession] : []}
                 selectedSession={selectedSession}
                 setSelectedSession={setSelectedSession}
-                isEvent={true}
+                isEvent={false}
             />
         </section>
     );

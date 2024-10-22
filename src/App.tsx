@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {Route, Routes, useLocation} from 'react-router-dom';
+import {Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import Header from './components/UI-Kit/Main UI/Header.tsx';
 import MovieCarousel from './components/MovieCarousel/MovieCarousel';
 import { MovieList } from './components/MovieList/MovieList';
@@ -20,6 +20,8 @@ import HomeList from './components/HomeList/HomeList.tsx';
 
 const App: React.FC = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+
     const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
 
     // Используем сохранённую дату из localStorage или "сегодня", если её нет
@@ -64,6 +66,8 @@ const App: React.FC = () => {
     const isHome = location.pathname === '/home';
     const isEventsPage = location.pathname === '/events';
     const isMoviesPage = location.pathname === '/movies';
+    const isLoginPage = location.pathname === '/login';
+    const isRegisterPage = location.pathname === '/register';
 
     useEffect(() => {
         // Сохранение выбранной даты в localStorage
@@ -95,54 +99,66 @@ const App: React.FC = () => {
         }
     };
 
-    // Добавляем проверку на авторизацию
+    // Функция для проверки авторизации
+    const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
+        useEffect(() => {
+            if (!username) {
+                navigate('/login');
+            }
+        }, [username, navigate]);
 
+        return username ? element : null;
+    };
 
     return (
         <CartProvider>
             <div className="App">
-                <Header
-                    title="VL.RU"
-                    username={username}
-                    setUsername={setUsername}
-                    selectedDateString={selectedDate}
-                    setSelectedDate={setSelectedDate}
-                    setCurrentView={setCurrentView}
-                    setCurrentFilter={setCurrentFilter}
-                    setMovieData={setMovieData}
-                    handleTodayClick={handleTodayClick}
-                    handleTomorrowClick={handleTomorrowClick}
-                    updateViewTitle={(date) => updateViewTitle(date, isHome, isEventsPage, isMoviesPage)}
-                    currentFilter={currentFilter}
-                    handleDateChange={handleDateChange}
-                />
+                {/* Убираем Header на страницах входа и регистрации */}
+                {!isLoginPage && !isRegisterPage && (
+                    <Header
+                        title="VL.RU"
+                        username={username}
+                        setUsername={setUsername}
+                        selectedDateString={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        setCurrentView={setCurrentView}
+                        setCurrentFilter={setCurrentFilter}
+                        setMovieData={setMovieData}
+                        handleTodayClick={handleTodayClick}
+                        handleTomorrowClick={handleTomorrowClick}
+                        updateViewTitle={(date) => updateViewTitle(date, isHome, isEventsPage, isMoviesPage)}
+                        currentFilter={currentFilter}
+                        handleDateChange={handleDateChange}
+                    />
+                )}
                 <Routes>
+                    <Route path="/" element={<Navigate to="/home" />} />
                     <Route path="/register" element={<><RegisterPage setUsername={setUsername}/><Footer/></>}/>
                     <Route path="/login" element={<><LoginPage setUsername={setUsername}/><Footer/></>}/>
-                    <Route path="/profile" element={<><ProfilePage/><Footer/></>}/>
-                    <Route path="/cart" element={<><CartPage/><Footer/></>}/>
-                    <Route path="/events" element={<>
+                    <Route path="/profile" element={<ProtectedRoute element={<><ProfilePage/><Footer/></>} />} />
+                    <Route path="/cart" element={<ProtectedRoute element={<><CartPage/><Footer/></>} />} />
+                    <Route path="/events" element={<ProtectedRoute element={<>
                         <main id="events-content"><MovieCarousel/><EventList selectedDate={selectedDate}
                                                                              currentView={currentView}
                                                                              currentFilter="events"/></main>
-                        <Footer/></>}/>
-                    <Route path="/movies" element={<>
+                        <Footer/></>} />} />
+                    <Route path="/movies" element={<ProtectedRoute element={<>
                         <main id="movies-content"><MovieCarousel/><MovieList selectedDate={selectedDate}
                                                                              currentView={currentView}
                                                                              currentFilter="movies"
                                                                              movieData={movieData}
                         /></main>
-                        <Footer/></>}/>
-                    <Route path="/premiere" element={<>
+                        <Footer/></>} />} />
+                    <Route path="/premiere" element={<ProtectedRoute element={<>
                         <main id="premiere-content"><MovieCarousel/><PremiereList
                             currentView={currentView}
                             currentFilter="premiere"/></main>
-                        <Footer/></>}/>
-                    <Route path="/home" element={<>
+                        <Footer/></>} />} />
+                    <Route path="/home" element={<ProtectedRoute element={<>
                         <main id="main-content"><MovieCarousel/><HomeList selectedDate={selectedDate}
                                                                           currentView={currentView}
                                                                           currentFilter="home"/></main>
-                        <Footer/></>}/>
+                        <Footer/></>} />} />
                 </Routes>
                 <ScrollToTop/>
             </div>

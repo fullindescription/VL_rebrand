@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -11,6 +11,16 @@ const LoginPage: React.FC<LoginPageProps> = ({ setUsername }) => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    // Проверка, есть ли пользователь, и если да, перенаправляем
+    useEffect(() => {
+        const storedUsername = localStorage.getItem('username');
+        const token = localStorage.getItem('access');
+        if (storedUsername && token) {
+            // Если пользователь уже вошел, перенаправляем на главную или другую защищённую страницу
+            navigate('/profile');
+        }
+    }, [navigate]);
 
     // Функция для логина
     const handleLogin = async () => {
@@ -54,7 +64,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setUsername }) => {
                     setUsername(userData.username);
 
                     // Перенаправляем пользователя на страницу профиля
-                    navigate('/profile');
+                    navigate('/home');
                 } else {
                     setError('Ошибка получения данных пользователя');
                 }
@@ -65,7 +75,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setUsername }) => {
             setError('Произошла ошибка. Попробуйте еще раз.');
         }
     };
-
 
     return (
         <div className="container">

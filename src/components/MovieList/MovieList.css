@@ -1,3 +1,74 @@
+.genre-select-container {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #E76F1C, #F69B65);
+  border-radius: 0.75rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+  width: 100%;
+}
+.genre-select-container:hover {
+  box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #E76F1C, #f37c35);
+}
+
+.genre-select-label {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #F9E2D8;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.genre-select-dropdown .genre-select__control {
+  border-radius: 0.5rem;
+  padding: 0.4rem;
+  border: 1px solid #F6BA9B;
+  background-color: #F9E2D8;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+}
+.genre-select-dropdown .genre-select__control:hover {
+  border-color: #fadaca;
+}
+.genre-select-dropdown .genre-select__menu {
+  border-radius: 0.75rem;
+  background-color: #EDD5C8;
+  box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.1);
+}
+.genre-select-dropdown .genre-select__option {
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.genre-select-dropdown .genre-select__option:hover {
+  background-color: #f8d5bd;
+  color: #B47156;
+}
+.genre-select-dropdown .genre-select__option--is-selected {
+  background-color: #E76F1C;
+  color: #fff;
+}
+.genre-select-dropdown .genre-select__multi-value {
+  background-color: #fdf3ec;
+  border-radius: 0.25rem;
+  padding: 0.3rem 0.5rem;
+  color: #B47156;
+  transition: background-color 0.3s ease;
+}
+.genre-select-dropdown .genre-select__multi-value:hover {
+  background-color: #f8d5bd;
+}
+.genre-select-dropdown .genre-select__multi-value__label {
+  font-size: 0.85rem;
+  color: #bc5914;
+}
+.genre-select-dropdown .genre-select__multi-value__remove {
+  color: #a54e11;
+  transition: color 0.2s ease;
+}
+.genre-select-dropdown .genre-select__multi-value__remove:hover {
+  color: #602d0a;
+}
+
 .movie-card {
   display: flex;
   flex-direction: row;
