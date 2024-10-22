@@ -63,7 +63,7 @@ const CartPage: React.FC = () => {
         const key = `${session.id}-${session.time}-${session.row ?? ''}-${session.seat ?? ''}`;
 
         if (acc[key]) {
-            acc[key].quantity += session.quantity; // Увеличиваем количество билетов
+            acc[key].quantity += session.quantity;
         } else {
             acc[key] = {...session};
         }

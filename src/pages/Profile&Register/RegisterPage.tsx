@@ -35,26 +35,39 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ setUsername }) => {
 
             if (response.ok) {
                 const data = await response.json();
+                console.log('Ответ от сервера:', data);  // Логируем ответ сервера для проверки
 
-                // Сохраняем все данные пользователя в localStorage
-                localStorage.setItem('username', data.username);
-                localStorage.setItem('email', data.email);
-                localStorage.setItem('first_name', data.first_name);
-                localStorage.setItem('last_name', data.last_name);
+                // Проверяем, есть ли поле username в ответе
+                if (data.username) {
+                    // Сохраняем имя пользователя в localStorage
+                    localStorage.setItem('username', data.username);
+                    localStorage.setItem('email', data.email || '');
+                    localStorage.setItem('first_name', data.first_name || '');
+                    localStorage.setItem('last_name', data.last_name || '');
 
-                // Обновляем состояние с username
-                setUsername(data.username);
+                    // Также сохраняем его для предзаполнения на странице логина
+                    localStorage.setItem('lastUsername', data.username);
 
-                // Перенаправляем пользователя на страницу профиля после полной записи данных
-                navigate('/login');
+                    // Обновляем состояние с username
+                    setUsername(data.username);
+
+                    // Перенаправляем на страницу логина
+                    navigate('/login');
+                } else {
+                    setError('Ошибка: имя пользователя не получено.');
+                }
             } else {
                 const data = await response.json();
+                console.log('Ошибка от сервера:', data);  // Логируем ошибку от сервера
                 setError(data.detail || 'Ошибка при регистрации');
             }
         } catch (err) {
+            console.error('Ошибка запроса:', err);  // Логируем ошибку сети или запроса
             setError('Произошла ошибка. Попробуйте еще раз.');
         }
     };
+
+
 
     return (
         <div className="container">

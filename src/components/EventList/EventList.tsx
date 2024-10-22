@@ -271,7 +271,7 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
                 allSessions={allSessions.length ? allSessions : selectedSession ? [selectedSession] : []}
                 selectedSession={selectedSession}
                 setSelectedSession={setSelectedSession}
-                isEvent={true}
+                isEvent={false}
             />
 
             {/* Модальное окно для событий */}

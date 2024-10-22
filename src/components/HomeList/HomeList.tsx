@@ -134,8 +134,10 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
         })
         .filter((item) =>
             item.sessions.length > 0 &&
-            (selectedGenres.length === 0 || selectedGenres.includes(item.category_name))
+            (selectedGenres.length === 0 || selectedGenres.some((genre) =>
+                genre.toLowerCase().trim() === item.category_name.toLowerCase().trim()))
         );
+
 
     const getMoviesLabel = (count: number) => {
         if (count === 1) return 'сеанс';
@@ -167,8 +169,9 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
 
             <div className="row row-cols-1 row-cols-md-2 g-4">
                 {filteredItemsWithSessions.length > 0 ? (
-                    filteredItemsWithSessions.map((item) => (
-                        <div key={item.id} className="col">
+                    filteredItemsWithSessions.map((item, index) => (
+                        <div key={`${item.id}-${index}`}
+                             className="col"> {/* Используем item.id и индекс для уникальности */}
                             <div
                                 className="container card bg-dark text-white w-100 h-100 d-flex flex-row home-card p-3">
                                 {/* Клик на изображение для открытия модального окна с описанием */}
@@ -194,7 +197,7 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                         }}
                                         onMouseEnter={(e) => {
                                             e.currentTarget.style.transform = 'scale(1.2)';
-                                            e.currentTarget.style.color = '#ffcc00'; // Изменение цвета границы при наведении
+                                            e.currentTarget.style.color = '#ffcc00'; // Изменение цвета при наведении
                                         }}
                                         onMouseLeave={(e) => {
                                             e.currentTarget.style.transform = 'scale(1)';
@@ -249,6 +252,7 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                     <p>На выбранную дату событий нет.</p>
                 )}
             </div>
+
 
             {/* Модальное окно для выбора мест (SessionDetails) */}
             <SessionDetails
