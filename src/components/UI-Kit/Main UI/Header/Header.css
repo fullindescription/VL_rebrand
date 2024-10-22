@@ -1,0 +1,7 @@
+@charset "UTF-8";
+.dropdown-item:hover {
+  background-color: #000 !important; /* Черный фон */
+  color: #fff !important; /* Белый текст */
+}
+
+/*# sourceMappingURL=Header.css.map */
