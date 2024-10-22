@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { format, parse } from 'date-fns';
 import './HomeList.scss';
-import SessionDetails from '../Session/SessionDetails.tsx'; // Подключение общих деталей сеанса
+import SessionDetails from '../Session/SessionDetails.tsx';
+import HomeModal from './HomeModal.tsx'; // Импортируем модальное окно для фильмов и событий
 
 type EventOrMovie = {
     id: number;
@@ -12,49 +13,54 @@ type EventOrMovie = {
     category_name: string;
     age_restriction: string;
     image_url: string | null;
-    video_url: string | null;
+    video_url?: string;
     sessions: any[];
 };
 
 type HomeListProps = {
     selectedDate: string;
     currentView: string;
-    currentFilter: string;
 };
 
 const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [itemsWithSessions, setItemsWithSessions] = useState<EventOrMovie[]>([]);
-    const [showModal, setShowModal] = useState(false);
+    const [showHomeModal, setShowHomeModal] = useState(false);
+    const [showSessionDetails, setShowSessionDetails] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<EventOrMovie | null>(null);
     const [selectedSession, setSelectedSession] = useState<any | null>(null);
     const [allSessions, setAllSessions] = useState<any[]>([]);
-    const [selectedGenres, setSelectedGenres] = useState<string[]>([]); // Состояние для выбранных жанров
-    const [genreOptions, setGenreOptions] = useState<{ label: string; value: string }[]>([]); // Опции жанров
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    const [genreOptions, setGenreOptions] = useState<{ label: string; value: string }[]>([]);
 
-    const handleSingleSessionClick = (session: any, title: string) => {
-        setSelectedSession({ ...session, title });
-        setShowModal(true);
+    // Обработчик открытия модального окна для описания (HomeModal)
+    const handleItemClick = (item: EventOrMovie) => {
+        setSelectedItem(item);
+        setAllSessions(item.sessions); // Передаем все сеансы в модальное окно
+        setShowHomeModal(true);
     };
 
-    const handleAllSessionsClick = (sessions: any[], title: string) => {
-        if (sessions.length > 0) {
-            const sessionsWithTitle = sessions.map((session) => ({
-                ...session,
-                title,
-            }));
-            setAllSessions(sessionsWithTitle);
-            setSelectedSession(null);
-            setShowModal(true);
-        }
+    // Обработчик открытия окна для выбора мест (SessionDetails)
+    const handleSingleSessionClick = (session: any, item: EventOrMovie) => {
+        setSelectedSession({ ...session, title: item.title });
+        setShowHomeModal(false); // Скрываем HomeModal, но не закрываем
+        setShowSessionDetails(true);
     };
 
-    const closeModal = () => {
-        setShowModal(false);
+    // Закрытие модального окна для описания
+    const closeHomeModal = () => {
+        setShowHomeModal(false);
+        setSelectedItem(null);
         setSelectedSession(null);
         setAllSessions([]);
     };
 
+    // Закрытие окна для выбора мест (SessionDetails)
+    const closeSessionDetails = () => {
+        setShowSessionDetails(false);
+        setShowHomeModal(true); // После закрытия SessionDetails возвращаемся к HomeModal
+    };
+
+    // Fetch данных
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -80,7 +86,6 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                     const allItems = [...normalizedEvents, ...normalizedMovies];
                     setItemsWithSessions(allItems);
 
-                    // Генерация уникальных жанров (категорий)
                     const genreOptions = Array.from(new Set(allItems.map(({ category_name }) => category_name)))
                         .map((genre) => ({
                             label: genre.charAt(0).toUpperCase() + genre.slice(1).toLowerCase(),
@@ -88,31 +93,18 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                         }));
 
                     setGenreOptions(genreOptions);
-                } else {
-                    setError('Ошибка при загрузке данных.');
                 }
             } catch (err) {
-                setError('Ошибка сети.');
-            } finally {
-                setLoading(false);
+                console.error('Ошибка сети');
             }
         };
 
         fetchData();
     }, [selectedDate]);
 
-    if (loading) {
-        return <p>Загрузка...</p>;
-    }
-
-    if (error) {
-        return <p>{error}</p>;
-    }
-
     const currentTime = format(new Date(), 'HH:mm');
-
     const filterFutureSessions = (sessions: any[]) => {
-        return sessions.filter((session) => session.time > currentTime);
+        return sessions.filter((session) => session.time < currentTime);
     };
 
     const formatSessionTime = (time: string) => {
@@ -120,7 +112,6 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
         return format(parsedTime, 'HH:mm');
     };
 
-    // Фильтрация элементов по выбранным жанрам
     const filteredItemsWithSessions = itemsWithSessions
         .map((item) => {
             const futureSessions = filterFutureSessions(
@@ -136,17 +127,10 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
             (selectedGenres.length === 0 || selectedGenres.includes(item.category_name))
         );
 
-    const getMoviesLabel = (count: number) => {
-        if (count === 1) return 'сеанс';
-        if (count >= 2 && count <= 4) return 'сеанса';
-        return 'сеансов';
-    };
-
     return (
         <section className="home-list container mt-5 mb-5">
             <h2 className="text-center mb-5">{currentView} в городе Владивосток</h2>
 
-            {/* Выпадающий список для выбора жанров */}
             <div className="mb-4 d-flex align-items-center justify-content-start genre-select-container">
                 <label htmlFor="genreSelect" className="form-label genre-select-label me-3">
                     Выберите жанры:
@@ -167,15 +151,43 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
 
             <div className="row row-cols-1 row-cols-md-2 g-4">
                 {filteredItemsWithSessions.length > 0 ? (
-                    filteredItemsWithSessions.map((item, index) => (
-                        <div key={`item-${item.id}-${index}`} className="col">
+                    filteredItemsWithSessions.map((item) => (
+                        <div key={item.id} className="col">
                             <div
                                 className="container card bg-dark text-white w-100 h-100 d-flex flex-row home-card p-3">
-                                <div className="container position-relative me-1 image-container w-50" style={{
-                                    backgroundImage: `url(${item.image_url || '/images/1.jpg'})`,
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center',
-                                }}>
+                                {/* Клик на изображение для открытия модального окна с описанием */}
+                                <div
+                                    className="container position-relative me-1 image-container w-50"
+                                    style={{
+                                        backgroundImage: `url(${item.image_url || '/images/1.jpg'})`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                    }}
+                                    onClick={() => handleItemClick(item)} // Клик для показа описания
+                                >
+                                    <button
+                                        className="btn btn-play position-absolute top-50 start-50 translate-middle"
+                                        onClick={() => handleItemClick(item)}
+                                        style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            fontSize: '50px',
+                                            color: '#fff',
+                                            transition: 'transform 0.3s ease, color 0.3s ease',
+                                            cursor: 'pointer'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1.2)';
+                                            e.currentTarget.style.color = '#ffcc00'; // Изменение цвета границы при наведении
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1)';
+                                            e.currentTarget.style.color = '#fff';
+                                        }}
+                                    >
+                                        <i className="bi bi-play-circle"></i>
+                                    </button>
+
                                     <div
                                         className="position-absolute top-0 start-0 m-2 p-1 bg-danger text-white rounded w-auto h-auto">
                                         {item.age_restriction}
@@ -187,14 +199,14 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                         <p className="card-category mt-3">{item.category_name}</p>
                                     </div>
                                     <div className="container d-flex flex-wrap gap-2 mt-1">
-                                        {item.sessions.slice(0, 1).map((session, sessionIndex) => (
+                                        {item.sessions.slice(0, 1).map((session) => (
                                             <div
-                                                key={`${session.id}-${item.id}-${sessionIndex}`}
+                                                key={session.id}
                                                 className="container bg-secondary text-center session-tile-small rounded"
-                                                onClick={() => handleSingleSessionClick(session, item.title)}
+                                                onClick={() => handleSingleSessionClick(session, item)}
                                             >
                                                 <p className="session-time">
-                                                    <strong>{formatSessionTime(session.time)}</strong>
+                                                <strong>{formatSessionTime(session.time)}</strong>
                                                 </p>
                                                 <p className="session-price text-muted">
                                                     <strong>{session.price} ₽</strong>
@@ -202,18 +214,6 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                                 <p className="session-seats text-muted"><strong>Комфорт</strong></p>
                                             </div>
                                         ))}
-
-                                        {item.sessions.length > 1 && (
-                                            <div
-                                                className="container-fluid bg-secondary d-flex flex-column p-1 sessionN mt-1 text-center rounded"
-                                                key={`session-more-${item.id}-${index}`}
-                                                onClick={() => handleAllSessionsClick(item.sessions, item.title)}
-                                            >
-                                                <p className="mb-0">
-                                                    <strong>+{item.sessions.length - 1} {getMoviesLabel(item.sessions.length - 1)}</strong>
-                                                </p>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -223,13 +223,27 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                     <p>На выбранную дату событий нет.</p>
                 )}
             </div>
+
+            {/* Модальное окно для выбора мест (SessionDetails) */}
             <SessionDetails
-                show={showModal}
-                onHide={closeModal}
-                allSessions={allSessions.length ? allSessions : selectedSession ? [selectedSession] : []}
+                show={showSessionDetails}
+                onHide={closeSessionDetails}
+                allSessions={allSessions}
                 selectedSession={selectedSession}
                 setSelectedSession={setSelectedSession}
-                isEvent={false}
+                isEvent={false} // Индикатор для событий
+            />
+
+            {/* Модальное окно для описания (HomeModal) */}
+            <HomeModal
+                show={showHomeModal}
+                onHide={closeHomeModal}
+                item={selectedItem}
+                sessions={allSessions} // Передаем все сеансы в модальное окно
+                onSelectSession={(session) => {
+                    setSelectedSession(session);
+                    setShowSessionDetails(true); // Открываем модальное окно выбора мест
+                }}
             />
         </section>
     );

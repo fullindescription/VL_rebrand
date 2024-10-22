@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 import './EventList.scss';
-import { format, parse } from 'date-fns';
+import {format, parse} from 'date-fns';
 import SessionDetails from '../Session/SessionDetails.tsx';
-import { Session } from '../Session/Session.ts';
-import { useNavigate } from 'react-router-dom';
+import EventModal from './EventModal.tsx'; // Импортируем новое модальное окно для событий
+import {Session} from '../Session/Session.ts';
+
 
 interface Event {
     id: number;
@@ -15,7 +16,7 @@ interface Event {
     category_name: string;
     age_restriction: string;
     image_url: string | null;
-    video_url: string | null;
+    video_url: string;
 }
 
 interface EventWithSessions {
@@ -29,44 +30,49 @@ type EventListProps = {
     currentFilter: string;
 };
 
-const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, currentFilter }) => {
+const EventList: React.FC<EventListProps> = ({selectedDate, currentView, currentFilter}) => {
     const [eventsWithSessions, setEventsWithSessions] = useState<EventWithSessions[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
     const [allSessions, setAllSessions] = useState<Session[]>([]);
-    const [selectedGenres, setSelectedGenres] = useState<string[]>([]); // Для выбранных жанров
-    const navigate = useNavigate();
+    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+    const [selectedEventSessions, setSelectedEventSessions] = useState<Session[]>([]); // Для модального окна событий
+    const [showEventModal, setShowEventModal] = useState(false); // Модальное окно для событий
 
-    // Проверка авторизации
-    const checkAuthorization = () => {
-        const token = localStorage.getItem('access');
-        if (!token) {
-            alert('Пожалуйста, войдите в аккаунт, чтобы выбрать сеанс.');
-            navigate('/login'); // Перенаправляем на страницу логина, если пользователь не авторизован
-            return false;
-        }
-        return true;
-    };
 
-    const handleSingleSessionClick = (session: Session, movieTitle: string) => {
-        if (!checkAuthorization()) return; // Проверяем авторизацию перед выбором сеанса
-        setSelectedSession({ ...session, title: movieTitle });
+    const handleSingleSessionClick = (session: Session, eventTitle: string) => {
+
+        setSelectedSession({...session, title: eventTitle});
         setShowModal(true);
     };
 
-    const handleAllSessionsClick = (sessions: Session[], movieTitle: string) => {
-        if (!checkAuthorization()) return; // Проверяем авторизацию перед выбором всех сеансов
+    const handleAllSessionsClick = (sessions: Session[], eventTitle: string) => {
+
         if (sessions.length > 0) {
             const sessionsWithTitle = sessions.map((session) => ({
                 ...session,
-                title: movieTitle,
+                title: eventTitle,
             }));
             setAllSessions(sessionsWithTitle);
             setSelectedSession(null);
             setShowModal(true);
         }
+    };
+
+    // Открытие модального окна события
+    const handleEventPlayClick = (event: Event, sessions: Session[]) => {
+        setSelectedEvent(event);
+        setSelectedEventSessions(sessions);
+        setShowEventModal(true);
+    };
+
+    const closeEventModal = () => {
+        setShowEventModal(false);
+        setSelectedEvent(null);
+        setSelectedEventSessions([]);
     };
 
     const closeModal = () => {
@@ -130,7 +136,6 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
         return format(parsedTime, 'HH:mm');
     };
 
-    // Фильтрация событий по выбранным жанрам
     const filteredEventsWithSessions = eventsWithSessions
         .map((eventWithSessions) => {
             const futureSessions = filterFutureSessions(
@@ -152,8 +157,7 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
         return 'сеансов';
     };
 
-    // Выпадающий список с выбором жанров (категорий)
-    const genreOptions = Array.from(new Set(eventsWithSessions.map(({ event }) => event.category_name))).map((genre) => ({
+    const genreOptions = Array.from(new Set(eventsWithSessions.map(({event}) => event.category_name))).map((genre) => ({
         label: genre.charAt(0).toUpperCase() + genre.slice(1).toLowerCase(),
         value: genre,
     }));
@@ -192,6 +196,28 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                 }}>
+                                    <button
+                                        className="btn btn-play position-absolute top-50 start-50 translate-middle"
+                                        onClick={() => handleEventPlayClick(event, sessions)}
+                                        style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            fontSize: '50px',
+                                            color: '#fff',
+                                            transition: 'transform 0.3s ease, color 0.3s ease',
+                                            cursor: 'pointer',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1.2)';
+                                            e.currentTarget.style.color = '#ffcc00';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1)';
+                                            e.currentTarget.style.color = '#fff';
+                                        }}
+                                    >
+                                        <i className="bi bi-play-circle"></i>
+                                    </button>
                                     <div
                                         className="position-absolute top-0 start-0 m-2 p-1 bg-danger text-white rounded w-auto h-auto">
                                         {event.age_restriction}
@@ -238,13 +264,26 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
                     <p>На выбранную дату событий нет.</p>
                 )}
             </div>
+
             <SessionDetails
                 show={showModal}
                 onHide={closeModal}
                 allSessions={allSessions.length ? allSessions : selectedSession ? [selectedSession] : []}
                 selectedSession={selectedSession}
                 setSelectedSession={setSelectedSession}
-                isEvent={false}
+                isEvent={true} // Индикатор для событий
+            />
+
+            {/* Модальное окно для событий */}
+            <EventModal
+                show={showEventModal}
+                onHide={closeEventModal}
+                event={selectedEvent}
+                sessions={selectedEventSessions}
+                onSelectSession={(session) => {
+                    setSelectedSession(session);
+                    setShowModal(true); // Перенаправляем в окно выбора мест
+                }}
             />
         </section>
     );

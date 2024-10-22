@@ -3,36 +3,31 @@ import { Modal, Button } from 'react-bootstrap';
 import { Session } from '../Session/Session.ts';
 import SeatSelectionModal from '../Session/SeatSelectionModal.tsx';
 import { parse, format } from 'date-fns';
-import { useCart } from '../../pages/Cart/CartContext.tsx'; // Используем контекст корзины
+import { useCart } from '../../pages/Cart/CartContext.tsx';
 
-type MovieModalProps = {
+type HomeModalProps = {
     show: boolean;
     onHide: () => void;
-    movie: {
+    item: {
         id: number;
         title: string;
         description: string;
         image_url: string | null;
         category_name: string;
         age_restriction: string;
-        video_url?: string; // Тип должен быть string | undefined, чтобы избежать ошибок
+        video_url?: string;
     } | null;
     sessions: Session[];
     onSelectSession: (session: Session) => void;
 };
 
-// Функция для корректного отображения времени сеанса
 const formatSessionTime = (time: string) => {
     const parsedTime = parse(time, 'HH:mm:ss', new Date());
     return format(parsedTime, 'HH:mm');
 };
 
-// Функция для проверки, является ли ссылка YouTube
-const isYouTubeUrl = (url: string) => {
-    return url.includes('youtu.be') || url.includes('youtube.com');
-};
+const isYouTubeUrl = (url: string) => url.includes('youtu.be') || url.includes('youtube.com');
 
-// Функция для получения embed-ссылки для YouTube
 const getEmbedUrl = (videoUrl?: string) => {
     if (!videoUrl) return null;
     if (isYouTubeUrl(videoUrl)) {
@@ -40,25 +35,23 @@ const getEmbedUrl = (videoUrl?: string) => {
         const videoId = url.pathname.split('/').pop();
         return `https://www.youtube.com/embed/${videoId}`;
     }
-    return videoUrl; // Если это не YouTube, возвращаем прямую ссылку (например, на MP4)
+    return videoUrl;
 };
 
-const MovieModal: React.FC<MovieModalProps> = ({ show, onHide, movie, sessions, onSelectSession }) => {
+const HomeModal: React.FC<HomeModalProps> = ({ show, onHide, item, sessions, onSelectSession }) => {
     const [selectedSession, setSelectedSession] = useState<Session | null>(null);
     const [showSeatSelection, setShowSeatSelection] = useState(false);
-    const [showVideo, setShowVideo] = useState(false); // Состояние для показа видео вместо изображения
-    const { addToCart } = useCart(); // Используем контекст корзины
+    const [showVideo, setShowVideo] = useState(false);
+    const { addToCart } = useCart();
 
-    const videoEmbedUrl = movie?.video_url ? getEmbedUrl(movie.video_url) : null; // Получаем ссылку для встраивания видео или прямую ссылку
+    const videoEmbedUrl = item?.video_url ? getEmbedUrl(item.video_url) : null;
 
-    // Обработчик выбора сеанса и показа списка мест
     const handleSessionSelect = (session: Session) => {
         setSelectedSession(session);
-        setShowSeatSelection(true); // Показываем выбор мест
-        onSelectSession(session); // Передаем выбранный сеанс
+        setShowSeatSelection(true);
+        onSelectSession(session);
     };
 
-    // Обработчик добавления мест в корзину
     const handleSeatsSelected = (selectedSeats: { row: number; seat: number; price: number }[]) => {
         if (!selectedSession) return;
 
@@ -71,30 +64,28 @@ const MovieModal: React.FC<MovieModalProps> = ({ show, onHide, movie, sessions, 
                 row: seat.row,
                 seat: seat.seat,
                 available_tickets: selectedSession.available_tickets,
-                quantity: 1, // Для каждого места - один билет
+                quantity: 1,
             });
         });
 
         setShowSeatSelection(false);
     };
 
-    // Обработчик клика по кнопке для показа видео
     const handlePlayClick = () => {
-        setShowVideo(true); // Переключаем состояние на показ видео
+        setShowVideo(true);
     };
 
-    // Обработчик закрытия модального окна
     const handleModalClose = () => {
-        setShowVideo(false); // Сбрасываем состояние показа видео
-        onHide(); // Закрываем модальное окно
+        setShowVideo(false);
+        onHide();
     };
 
-    if (!movie) return null;
+    if (!item) return null;
 
     return (
-        <Modal show={show} onHide={handleModalClose} centered size="lg"> {/* Увеличиваем размер модального окна */}
+        <Modal show={show} onHide={handleModalClose} centered size="lg">
             <Modal.Header closeButton>
-                <Modal.Title>{movie.title}</Modal.Title>
+                <Modal.Title>{item.title}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <div className="container-fluid row">
@@ -102,12 +93,11 @@ const MovieModal: React.FC<MovieModalProps> = ({ show, onHide, movie, sessions, 
                         {!showVideo && videoEmbedUrl ? (
                             <div className="position-relative">
                                 <img
-                                    src={movie.image_url || '/images/default.jpg'}
-                                    alt={movie.title}
+                                    src={item.image_url || '/images/default.jpg'}
+                                    alt={item.title}
                                     className="w-100 mb-3"
                                     style={{ height: '100%', objectFit: 'cover' }}
                                 />
-                                {/* Кнопка воспроизведения поверх изображения */}
                                 <button
                                     className="btn btn-play position-absolute top-50 start-50 translate-middle"
                                     onClick={handlePlayClick}
@@ -119,11 +109,11 @@ const MovieModal: React.FC<MovieModalProps> = ({ show, onHide, movie, sessions, 
                                         transition: 'transform 0.3s ease, color 0.3s ease',
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.currentTarget.style.transform = 'scale(1.2)'; // Увеличение при наведении
-                                        e.currentTarget.style.color = '#ffcc00'; // Изменение цвета при наведении
+                                        e.currentTarget.style.transform = 'scale(1.2)';
+                                        e.currentTarget.style.color = '#ffcc00';
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform = 'scale(1)'; // Возврат к исходному размеру
+                                        e.currentTarget.style.transform = 'scale(1)';
                                         e.currentTarget.style.color = '#fff';
                                     }}
                                 >
@@ -136,7 +126,7 @@ const MovieModal: React.FC<MovieModalProps> = ({ show, onHide, movie, sessions, 
                                     <iframe
                                         width="100%"
                                         height="100%"
-                                        src={videoEmbedUrl} // Преобразованная ссылка для YouTube
+                                        src={videoEmbedUrl}
                                         title="YouTube video"
                                         frameBorder="0"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -151,27 +141,26 @@ const MovieModal: React.FC<MovieModalProps> = ({ show, onHide, movie, sessions, 
                             </div>
                         ) : (
                             <img
-                                src={movie.image_url || '/images/default.jpg'}
-                                alt={movie.title}
+                                src={item.image_url || '/images/default.jpg'}
+                                alt={item.title}
                                 className="w-100 mb-3"
                                 style={{ height: '100%', objectFit: 'cover' }}
                             />
                         )}
                     </div>
 
-                    {/* Правая колонка: Сеансы или выбор мест */}
                     <div className="col-md-6">
                         {!showSeatSelection ? (
                             <>
                                 <div className="mb-3">
                                     <strong>Описание:</strong>
-                                    <p>{movie.description}</p>
+                                    <p>{item.description}</p>
                                 </div>
                                 <div className="mb-3">
-                                    <strong>Категория:</strong> {movie.category_name}
+                                    <strong>Категория:</strong> {item.category_name}
                                 </div>
                                 <div className="mb-3">
-                                    <strong>Возрастное ограничение:</strong> {movie.age_restriction}
+                                    <strong>Возрастное ограничение:</strong> {item.age_restriction}
                                 </div>
 
                                 <h5>Доступные сеансы</h5>
@@ -212,4 +201,4 @@ const MovieModal: React.FC<MovieModalProps> = ({ show, onHide, movie, sessions, 
     );
 };
 
-export default MovieModal;
+export default HomeModal;
