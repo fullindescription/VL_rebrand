@@ -113,15 +113,30 @@ const Header: React.FC<HeaderProps> = ({
                     <nav className="d-none d-md-flex">
                         <ul className="nav">
                             <li className="nav-item">
-                                <button onClick={handleTodayClick} className="btn btn-outline" style={{ color: '#F9E2D8' }}>
+                                <button
+                                    onClick={() => {
+                                        handleTodayClick();
+                                        window.location.reload(); // Перезагрузка страницы после нажатия "Сегодня"
+                                    }}
+                                    className="btn btn-outline"
+                                    style={{color: '#F9E2D8'}}
+                                >
                                     Сегодня
                                 </button>
                             </li>
                             <li className="nav-item">
-                                <button onClick={handleTomorrowClick} className="btn btn-outline" style={{ color: '#F9E2D8' }}>
+                                <button
+                                    onClick={() => {
+                                        handleTomorrowClick();
+                                        window.location.reload(); // Перезагрузка страницы после нажатия "Завтра"
+                                    }}
+                                    className="btn btn-outline"
+                                    style={{color: '#F9E2D8'}}
+                                >
                                     Завтра
                                 </button>
                             </li>
+
                             <li className="nav-item">
                                 <button
                                     onClick={() => {
@@ -129,6 +144,7 @@ const Header: React.FC<HeaderProps> = ({
                                         setCurrentFilter('premiere');
                                         updateViewTitle(selectedDateString, 'premiere'); // Обновляем заголовок при клике
                                         navigate('/premiere');
+                                        window.location.reload();
                                     }}
                                     className="btn btn "
                                     style={{ color: '#F9E2D8' }}
@@ -143,6 +159,7 @@ const Header: React.FC<HeaderProps> = ({
                                         setCurrentFilter('events');
                                         updateViewTitle(selectedDateString, 'events'); // Обновляем заголовок при клике
                                         navigate('/events');
+                                        window.location.reload();
                                     }}
                                     className="btn btn-outline"
                                     style={{ color: '#F9E2D8' }}
@@ -157,6 +174,7 @@ const Header: React.FC<HeaderProps> = ({
                                         setCurrentFilter('movies');
                                         updateViewTitle(selectedDateString, 'movies'); // Обновляем заголовок при клике
                                         navigate('/movies');
+                                        window.location.reload();
                                     }}
                                     className="btn btn-outline"
                                     style={{ color: '#F9E2D8' }}
@@ -182,22 +200,36 @@ const Header: React.FC<HeaderProps> = ({
                             </button>
                             <ul className="dropdown-menu " aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <button onClick={handleTodayClick} className="dropdown-item">
+                                    <button
+                                        onClick={() => {
+                                            handleTodayClick();
+                                            window.location.reload(); // Перезагрузка страницы после нажатия "Сегодня"
+                                        }}
+                                        className="dropdown-item"
+                                    >
                                         Сегодня
                                     </button>
                                 </li>
                                 <li>
-                                    <button onClick={handleTomorrowClick} className="dropdown-item">
-                                        Завтра
+                                    <button
+                                        onClick={() => {
+                                            handleTomorrowClick();
+                                            window.location.reload(); // Перезагрузка страницы после нажатия "Завтра"
+                                        }}
+                                        className="dropdown-item"
+                                    >
+                                    Завтра
                                     </button>
                                 </li>
+
                                 <li>
                                     <button
                                         onClick={() => {
                                             setCurrentView('Премьеры');
                                             setCurrentFilter('premiere');
                                             navigate('/premiere');
-                                            updateViewTitle(selectedDateString, 'premiere'); // Обновляем заголовок при клике
+                                            updateViewTitle(selectedDateString, 'premiere');
+                                            window.location.reload();// Обновляем заголовок при клике
                                         }}
                                         className="dropdown-item"
                                     >
@@ -210,7 +242,8 @@ const Header: React.FC<HeaderProps> = ({
                                             setCurrentView('События');
                                             setCurrentFilter('events');
                                             navigate('/events');
-                                            updateViewTitle(selectedDateString, 'events'); // Обновляем заголовок при клике
+                                            updateViewTitle(selectedDateString, 'events');
+                                            window.location.reload();// Обновляем заголовок при клике
                                         }}
                                         className="dropdown-item"
                                     >
@@ -223,7 +256,8 @@ const Header: React.FC<HeaderProps> = ({
                                             setCurrentView('Фильмы');
                                             setCurrentFilter('movies');
                                             navigate('/movies');
-                                            updateViewTitle(selectedDateString, 'movies'); // Обновляем заголовок при клике
+                                            updateViewTitle(selectedDateString, 'movies');
+                                            window.location.reload();// Обновляем заголовок при клике
                                         }}
                                         className="dropdown-item"
                                     >

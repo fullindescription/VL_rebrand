@@ -24,9 +24,10 @@ const App: React.FC = () => {
 
     const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
     const initialDate = localStorage.getItem('selectedDate') || format(new Date(), 'yyyy-MM-dd');
+    const initialFilter = localStorage.getItem('currentFilter') || 'home'; // Восстанавливаем фильтр из localStorage
     const [selectedDate, setSelectedDate] = useState<string>(initialDate);
-    const [currentView, setCurrentView] = useState<string>('Афиша');
-    const [currentFilter, setCurrentFilter] = useState<string>('home');
+    const [currentView, setCurrentView] = useState<string>('');
+    const [currentFilter, setCurrentFilter] = useState<string>(initialFilter); // Используем сохранённый фильтр
     const [movieData, setMovieData] = useState<Movie[]>([]);
 
     // Обновляем заголовок в зависимости от выбранной даты и фильтра
@@ -49,7 +50,6 @@ const App: React.FC = () => {
             } else {
                 setCurrentView(`События на ${formattedDate}`);
             }
-            window.location.pathname;
         } else if (filter === 'movies') {
             if (date === format(new Date(), 'yyyy-MM-dd')) {
                 setCurrentView('Фильмы на сегодня');
@@ -58,7 +58,6 @@ const App: React.FC = () => {
             } else {
                 setCurrentView(`Фильмы на ${formattedDate}`);
             }
-            window.location.pathname;
         } else if (filter === 'premiere') {
             setCurrentView('Премьера'); // Фиксированный заголовок для премьеры
         } else {
@@ -66,17 +65,22 @@ const App: React.FC = () => {
         }
     };
 
+    // Сохраняем текущий фильтр в localStorage
+    useEffect(() => {
+        localStorage.setItem('currentFilter', currentFilter); // Сохраняем текущий фильтр
+    }, [currentFilter]);
 
-
-
+    // Сохраняем выбранную дату в localStorage
     useEffect(() => {
         localStorage.setItem('selectedDate', selectedDate);
     }, [selectedDate]);
 
+    // Обновляем заголовок при изменении маршрута или фильтра
     useEffect(() => {
         updateViewTitle(selectedDate, currentFilter);
     }, [location.pathname, selectedDate, currentFilter]);
 
+    // Сохраняем username в localStorage при изменении
     useEffect(() => {
         if (username) {
             localStorage.setItem('username', username);
@@ -128,7 +132,7 @@ const App: React.FC = () => {
                         setMovieData={setMovieData}
                         handleTodayClick={handleTodayClick}
                         handleTomorrowClick={handleTomorrowClick}
-                        updateViewTitle={updateViewTitle} // Передаем updateViewTitle
+                        updateViewTitle={updateViewTitle}
                         currentFilter={currentFilter}
                         handleDateChange={handleDateChange}
                     />
