@@ -84,11 +84,11 @@ class MovieSessionRepository:
 
         # Проверяем, является ли дата сегодняшней
         if date == today:
-            current_time = datetime.now().time()
+
             if time:
                 # Фильтруем по времени, исключая прошедшие сеансы
-                return MovieSession.objects.filter(date=date, time__gt=max(time, current_time))
-            return MovieSession.objects.filter(date=date, time__gt=current_time)
+                return MovieSession.objects.filter(date=date, time__gt=time)
+            return MovieSession.objects.filter(date=date)
         else:
             # Для будущих дней игнорируем параметр времени и выводим все сеансы
             return MovieSession.objects.filter(date=date)
