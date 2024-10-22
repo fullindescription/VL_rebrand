@@ -80,7 +80,7 @@ class MovieService:
                 "sessions": session_serializer.data
             })
 
-        cache.set(cache_key, response_data, 0)
+        cache.set(cache_key, response_data, 1)
         return response_data
 
     @staticmethod
