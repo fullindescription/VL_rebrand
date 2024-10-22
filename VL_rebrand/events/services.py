@@ -143,13 +143,6 @@ class EventService:
 
     @staticmethod
     def get_events_for_day(date, time=None):
-        cache_key = f"event_for_day_{date}"
-        if time:
-            cache_key += f"_{time}"
-
-        cached_response = cache.get(cache_key)
-        if cached_response:
-            return {"message": "Data retrieved from cache.", "data": cached_response}
 
         try:
             date_obj = datetime.strptime(date, '%Y-%m-%d').date()
@@ -170,7 +163,6 @@ class EventService:
                 "sessions": session_serializer.data
             })
 
-        cache.set(cache_key, response_data, 60 * 15)
         return response_data
 
 class CartService:
