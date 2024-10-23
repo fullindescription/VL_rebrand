@@ -22,6 +22,7 @@ jobs:
 
     - name: Decrypt configs
       run: |
+        ls
         python3 secure_config.py decrypt ${{ secrets.ENV_KEY }}
         cp .env ./VL_rebrand
         ls
