@@ -1,0 +1,62 @@
+$primary-color: rgba(255, 118, 0, 1); // Оранжевый
+$primary-light: rgba(255, 170, 83, 1);
+$primary-lighter: rgba(255, 204, 138, 1);
+$primary-lightest: rgba(255, 229, 192, 1);
+
+$secondary-color: #B47156; // Тёмно-бежевый/оранжевый
+$secondary-light: #C69278; // Светло-бежевый/оранжевый
+$secondary-lighter: #D8A593; // Более светлый бежевый
+$secondary-lightest: #EDD5C8; // Светлый бежевый
+
+.register {
+  .card {
+    background-color: $primary-lightest;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); // Легкая тень для объемного эффекта
+    padding: 20px;
+  }
+
+  h2 {
+    color: $primary-color;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .form-label {
+    color: $primary-color;
+    font-weight: 600;
+  }
+
+  .form-control {
+    border: 1px solid $secondary-lighter;
+    background-color: $secondary-lightest;
+    color: $primary-color;
+
+    &:focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 5px $primary-light;
+    }
+  }
+
+  .btn-danger {
+    background-color: $primary-color;
+    border: none;
+    font-size: 1.1rem;
+
+    &:hover {
+      background-color: $primary-light;
+    }
+  }
+
+  .text-danger {
+    color: #d9534f;
+  }
+
+  a {
+    color: $primary-color;
+
+    &:hover {
+      color: $primary-light;
+    }
+  }
+}

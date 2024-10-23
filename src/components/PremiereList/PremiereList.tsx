@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Session } from "../Session/Session.ts";
+import { Session } from "../Session&SeatSelection/Session/Session.ts";
 import { format, parse } from "date-fns";
 import { ru } from 'date-fns/locale';
 import './PremiereList.scss';
@@ -85,7 +85,7 @@ const PremiereList: React.FC<PremiereListProps> = ({ currentView, currentFilter 
                 {moviesWithSessions.length > 0 ? (
                     moviesWithSessions.map(({ movie, sessions }) => (
                         <div key={movie.id} className="col">
-                            <div className="container card bg-dark text-white w-100 h-100 d-flex flex-row premiere-card p-3">
+                            <div className="container card  text-white w-100 h-100 d-flex flex-row premiere-card p-3">
                                 <div className="container position-relative me-1 image-container w-50" style={{
                                     backgroundImage: `url(${movie.image_url || '/images/1.jpg'})`,
                                     backgroundSize: 'cover',

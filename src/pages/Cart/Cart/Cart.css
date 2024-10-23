@@ -1,0 +1,79 @@
+.modal-content {
+  background-color: #FFE5C0;
+  border-radius: 12px;
+  border: 1px solid #FFCC8A;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.modal-content .modal-header {
+  background-color: #FFAA53;
+  color: white;
+  border-bottom: 1px solid #FFCC8A;
+  border-radius: 12px 12px 0 0;
+}
+.modal-content .modal-header .modal-title {
+  font-weight: bold;
+}
+.modal-content .modal-header .btn-close {
+  background-color: transparent;
+  border: none;
+}
+.modal-content .modal-header .btn-close:hover {
+  background-color: #C69278;
+}
+.modal-content .modal-body {
+  padding: 20px;
+  background-color: #FFE5C0;
+}
+.modal-content .modal-body p {
+  color: #B47156;
+}
+.modal-content .modal-body ul {
+  list-style: none;
+  padding: 0;
+}
+.modal-content .modal-body ul li {
+  background-color: #FFCC8A;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #B47156;
+}
+.modal-content .modal-body ul li strong {
+  color: #FF7600;
+}
+.modal-content .modal-body ul li .btn-outline-danger {
+  color: #FF7600;
+  border: 1px solid #FF7600;
+}
+.modal-content .modal-body ul li .btn-outline-danger:hover {
+  background-color: #FF7600;
+  color: white;
+}
+.modal-content .modal-footer {
+  background-color: #FFE5C0;
+  border-top: 1px solid #FFCC8A;
+  border-radius: 0 0 12px 12px;
+}
+.modal-content .modal-footer h5 {
+  color: #FF7600;
+  font-weight: bold;
+}
+.modal-content .modal-footer .btn-success {
+  background-color: #FF7600;
+  border: none;
+}
+.modal-content .modal-footer .btn-success:hover {
+  background-color: #FFAA53;
+}
+.modal-content .modal-footer .btn-secondary {
+  background-color: #C69278;
+  border: none;
+}
+.modal-content .modal-footer .btn-secondary:hover {
+  background-color: #D8A593;
+}
+
+/*# sourceMappingURL=Cart.css.map */

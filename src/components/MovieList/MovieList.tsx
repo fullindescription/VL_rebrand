@@ -3,9 +3,9 @@ import Select from 'react-select';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './MovieList.scss';
 import { format, parse } from 'date-fns';
-import SessionDetails from '../Session/SessionDetails.tsx';
+import SessionDetails from '../Session&SeatSelection/Session/SessionDetails.tsx';
 import MovieModal from "./MovieModal.tsx";
-import { Session } from '../Session/Session.ts';
+import { Session } from '../Session&SeatSelection/Session/Session.ts';
 
 type Movie = {
     id: number;
@@ -192,7 +192,7 @@ export const MovieList: React.FC<MovieListProps> = ({ selectedDate, currentView,
                 {moviesToDisplay.length > 0 ? (
                     moviesToDisplay.map(({ movie, sessions }) => (
                         <div key={movie.id} className="col">
-                            <div className="container card bg-dark text-white w-100 h-100 d-flex flex-row movie-card p-3">
+                            <div className="container card text-white w-100 h-100 d-flex flex-row movie-card p-3">
                                 <div
                                     className="container position-relative me-1 image-container w-50 h-100"
                                     style={{

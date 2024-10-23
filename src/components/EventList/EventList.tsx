@@ -3,9 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 import './EventList.scss';
 import { format, parse } from 'date-fns';
-import SessionDetails from '../Session/SessionDetails.tsx';
+import SessionDetails from '../Session&SeatSelection/Session/SessionDetails.tsx';
 import EventModal from './EventModal.tsx'; // Импортируем новое модальное окно для событий
-import { Session } from '../Session/Session.ts';
+import { Session } from '../Session&SeatSelection/Session/Session.ts';
 
 interface Event {
     id: number;
@@ -186,7 +186,7 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
                 {filteredEventsWithSessions.length > 0 ? (
                     filteredEventsWithSessions.map(({ event, sessions }) => (
                         <div key={event.id} className="col">
-                            <div className="container card bg-dark text-white w-100 h-100 d-flex flex-row event-card p-3">
+                            <div className="container card text-white w-100 h-100 d-flex flex-row event-card p-3">
                                 <div
                                     className="container position-relative me-1 image-container w-50"
                                     style={{
@@ -271,7 +271,7 @@ const EventList: React.FC<EventListProps> = ({ selectedDate, currentView, curren
                 allSessions={allSessions.length ? allSessions : selectedSession ? [selectedSession] : []}
                 selectedSession={selectedSession}
                 setSelectedSession={setSelectedSession}
-                isEvent={true}
+                isEvent={false}
             />
 
             {/* Модальное окно для событий */}

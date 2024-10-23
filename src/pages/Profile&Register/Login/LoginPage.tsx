@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './Login.scss';
 
 type LoginPageProps = {
     setUsername: (username: string) => void;
@@ -77,7 +78,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setUsername }) => {
     };
 
     return (
-        <div className="container">
+        <div className="container login">
             <div className="row justify-content-center align-items-center vh-100">
                 <div className="col-md-6 col-lg-4">
                     <div className="card p-4">
@@ -91,6 +92,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setUsername }) => {
                                     className="form-control"
                                     value={username}
                                     onChange={(e) => setLocalUsername(e.target.value)}
+                                    placeholder="Введите имя пользователя"
                                 />
                             </div>
                             <div className="mb-3">
@@ -101,6 +103,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setUsername }) => {
                                     className="form-control"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="Введите пароль"
                                 />
                             </div>
                             <button type="button" className="btn btn-success w-100" onClick={handleLogin}>

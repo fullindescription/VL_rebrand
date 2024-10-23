@@ -1,13 +1,16 @@
+
+
 .home-card {
-  // Стиль карточки фильма
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  background-color: #261d1d;
-  border-radius: 32px;
+  background-color: #3a3a3a;
+  border-radius: 16px;
+  border: 1px solid #444;
+
 
   .container {
-    transition: transform 0.3s ease-in-out; // Плавная анимация
+    transition: transform 0.3s ease-in-out;
   }
 
   .image-container {
@@ -15,77 +18,135 @@
     border-radius: 7px;
     background-size: cover;
     background-position: center;
-    transition: transform 0.3s ease-in-out; // Плавная анимация для изображения
+    transition: transform 0.3s ease-in-out;
+
     &:hover {
-      transform: scale(1.05); // Увеличение плиток с ценами
+      transform: scale(1.05);
     }
   }
 
   .card-body {
     padding: 16px;
     display: flex;
-
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+     // Серый фон для внутренней части карточки
+    border-radius: 0 16px 16px 0; // Скругленные углы справа
   }
 
   .card-title {
-    font-size: 24px; // Примерный размер заголовка
+    font-size: 24px;
     font-weight: bold;
-    color: white; // Яркий цвет для заголовка
+    color: white;
   }
 
   .card-category {
     font-size: 16px;
-    color: #b0b0b0; // Серый цвет для подкатегории
+    color: #b0b0b0;
   }
 
   .card-duration {
     font-size: 14px;
-    color: #999999; // Бледный цвет для длительности
+    color: #999999;
   }
 
   .sessions {
     display: flex;
     gap: 10px;
-    margin-left: 0; // Сдвиг всех элементов к левому краю
+    margin-left: 0;
   }
 
   .session-tile-small {
     width: 100px;
     height: 120px;
     border-radius: 8.25px;
-    background-color: #333; // Фон плитки
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    transition: transform 0.3s ease-in-out;
+
     &:hover {
-      transform: scale(1.05); // Увеличение плиток с ценами
+      transform: scale(1.05);
     }
   }
 
   .session-time {
     font-size: 20px;
-    color: white;
+    color: #fff; // Белый цвет для времени
   }
 
   .session-price,
   .session-seats {
     font-size: 14px;
-    color: #b0b0b0; // Серый цвет для цены и оставшихся билетов
+    color: #c1c1c1; // Светло-серый для цены и доступных мест
   }
 
   .session-more {
     font-size: 16px;
-    color: white;
+    color: #fff;
   }
-  .sessionN{
+
+  .sessionN {
     width: 90%;
+    background-color: #444; // Тёмно-серый фон для доп. сеансов
     &:hover {
-      transform: scale(1.05); // Увеличение плиток с ценами
+      transform: scale(1.05);
       transition: transform 0.3s ease-in-out;
     }
+  }
+}
+
+.genre-select-container {
+  .genre-select-dropdown {
+    .genre-select__control {
+      background-color: white;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-shadow: none;
+
+      &:hover {
+        border-color: #B47156; // Цвет границы при наведении
+      }
+    }
+
+    .genre-select__menu {
+      background-color: white;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .genre-select__option {
+      color: #333;
+
+      &:hover {
+        background-color: #FFAA53;
+        color: white;
+      }
+    }
+
+    .genre-select__multi-value {
+      background-color: #FFAA53;
+      border-radius: 5px;
+
+      .genre-select__multi-value__label {
+        color: white;
+      }
+
+      .genre-select__multi-value__remove {
+        color: white;
+
+        &:hover {
+          background-color: #FF7600;
+          color: white;
+        }
+      }
+    }
+  }
+
+  .genre-select-label {
+    color: #fff;
   }
 }

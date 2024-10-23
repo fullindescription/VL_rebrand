@@ -1,8 +1,9 @@
 import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import { useCart } from './CartContext.tsx';
+import { useCart } from '../CartContext.tsx';
 import { format, parse } from 'date-fns';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import './Cart.scss'
 
 const formatSessionTime = (time: string) => {
     const parsedTime = parse(time, 'HH:mm:ss', new Date());

@@ -1,0 +1,51 @@
+.cart-page .cart-container {
+  background-color: #FFE5C0;
+  border: 1px solid #FFAA53;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+.cart-page .cart-container h2 {
+  color: #FF7600;
+  font-weight: bold;
+}
+.cart-page .cart-container .cart-items {
+  background-color: #EDD5C8;
+  border-radius: 5px;
+  padding: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.cart-page .cart-container .cart-item {
+  background-color: #FFE5C0;
+  border-bottom: 1px solid #FFCC8A;
+}
+.cart-page .cart-container .cart-item h5 {
+  font-size: 1.2rem;
+  color: #FF7600;
+}
+.cart-page .cart-container .cart-item small {
+  color: #B47156;
+}
+.cart-page .cart-container .cart-item button:hover {
+  background-color: #FF7600;
+  color: white;
+}
+.cart-page .cart-container .fw-bold {
+  color: #FF7600;
+}
+.cart-page .cart-container .btn-success {
+  background-color: #FF7600;
+  border: none;
+}
+.cart-page .cart-container .btn-success:hover {
+  background-color: #FFAA53;
+}
+.cart-page .cart-container .btn-danger {
+  background-color: #FF7600;
+  border: none;
+}
+.cart-page .cart-container .btn-danger:hover {
+  background-color: #FFAA53;
+}
+
+/*# sourceMappingURL=CartPage.css.map */

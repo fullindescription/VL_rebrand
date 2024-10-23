@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import { Session } from '../Session/Session.ts';
-import SeatSelectionModal from '../Session/SeatSelectionModal.tsx';
+import { Session } from '../Session&SeatSelection/Session/Session.ts';
+import SeatSelectionModal from '../Session&SeatSelection/SeatSelection/SeatSelectionModal.tsx';
 import { parse, format } from 'date-fns';
 import { useCart } from '../../pages/Cart/CartContext.tsx';
 

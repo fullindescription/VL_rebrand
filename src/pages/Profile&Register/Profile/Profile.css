@@ -1,0 +1,28 @@
+.profile .card {
+  background-color: #FFE5C0;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+.profile h2 {
+  color: #FF7600;
+  text-align: center;
+  font-weight: bold;
+}
+.profile .list-group-item {
+  background-color: rgba(180, 113, 86, 0.25);
+  font-weight: 600;
+}
+.profile .btn-danger {
+  background-color: #FF7600;
+  border: none;
+  font-size: 1.1rem;
+}
+.profile .btn-danger:hover {
+  background-color: #FFAA53;
+}
+.profile .text-secondary {
+  color: #B47156;
+}
+
+/*# sourceMappingURL=Profile.css.map */

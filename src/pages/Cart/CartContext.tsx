@@ -1,4 +1,4 @@
-// Обновленный тип Session с количеством билетов
+// Обновленный тип Session&SeatSelection с количеством билетов
 import {createContext, ReactNode, useContext, useState} from "react";
 
 type Session = {

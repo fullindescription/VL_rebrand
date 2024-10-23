@@ -1,0 +1,42 @@
+.login .card {
+  background-color: #FFE5C0;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+.login h2 {
+  color: #FF7600;
+  text-align: center;
+  font-weight: bold;
+}
+.login .form-label {
+  color: #FF7600;
+}
+.login .form-control {
+  border: 1px solid #D8A593;
+  background-color: #EDD5C8;
+  color: #FF7600;
+}
+.login .form-control:focus {
+  border-color: #FF7600;
+  box-shadow: 0 0 5px #FFAA53;
+}
+.login .btn-success {
+  background-color: #FF7600;
+  border: none;
+  font-size: 1.1rem;
+}
+.login .btn-success:hover {
+  background-color: #FFAA53;
+}
+.login .text-danger {
+  color: #d9534f;
+}
+.login a {
+  color: #FF7600;
+}
+.login a:hover {
+  color: #FFAA53;
+}
+
+/*# sourceMappingURL=Login.css.map */

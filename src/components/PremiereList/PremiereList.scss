@@ -1,13 +1,13 @@
 .premiere-card {
-  // Стиль карточки фильма
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  background-color: #261d1d;
-  border-radius: 32px;
+  background-color: #3a3a3a;
+  border-radius: 16px;
+  border: 1px solid #444;
 
   .container {
-    transition: transform 0.3s ease-in-out; // Плавная анимация
+    transition: transform 0.3s ease-in-out;
   }
 
   .image-container {
@@ -15,9 +15,9 @@
     border-radius: 7px;
     background-size: cover;
     background-position: center;
-    transition: transform 0.3s ease-in-out; // Плавная анимация для изображения
+    transition: transform 0.3s ease-in-out;
     &:hover {
-      transform: scale(1.05); // Увеличение плиток с ценами
+      transform: scale(1.05);
     }
   }
 
@@ -31,38 +31,38 @@
   }
 
   .card-title {
-    font-size: 24px; // Примерный размер заголовка
+    font-size: 24px;
     font-weight: bold;
-    color: white; // Яркий цвет для заголовка
+    color: white;
   }
 
   .card-category {
     font-size: 16px;
-    color: #b0b0b0; // Серый цвет для подкатегории
+    color: #b0b0b0;
   }
 
   .card-duration {
     font-size: 14px;
-    color: #999999; // Бледный цвет для длительности
+    color: #999999;
   }
 
   .sessions {
     display: flex;
     gap: 10px;
-    margin-left: 0; // Сдвиг всех элементов к левому краю
+    margin-left: 0;
   }
 
   .session-tile-small {
     width: 100px;
     height: 120px;
     border-radius: 8.25px;
-    background-color: #333; // Фон плитки
+    background-color: #333;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     &:hover {
-      transform: scale(1.05); // Увеличение плиток с ценами
+      transform: scale(1.05);
     }
   }
 
@@ -74,7 +74,7 @@
   .session-price,
   .session-seats {
     font-size: 14px;
-    color: #b0b0b0; // Серый цвет для цены и оставшихся билетов
+    color: #b0b0b0;
   }
 
   .session-more {
@@ -84,7 +84,7 @@
   .sessionN{
     width: 90%;
     &:hover {
-      transform: scale(1.05); // Увеличение плиток с ценами
+      transform: scale(1.05);
       transition: transform 0.3s ease-in-out;
     }
   }
