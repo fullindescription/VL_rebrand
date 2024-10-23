@@ -24,10 +24,10 @@ jobs:
       run: |
         python3 secure_config.py decrypt ${{ secrets.ENV_KEY }}
         cp .env ./VL_rebrand
-        export $(grep -v '^#' .env | xargs)
 
     - name: Autotests
       run: |
+        export $(grep -v '^#' .env | xargs)
         cd ./VL_rebrand/
         python3 -m pip install -r requirements.txt
         python3 manage.py test
