@@ -1,7 +1,64 @@
-@charset "UTF-8";
-.dropdown-item:hover {
-  background-color: #000 !important; /* Черный фон */
-  color: #fff !important; /* Белый текст */
+.header {
+  background: linear-gradient(135deg, rgba(207, 106, 22, 0.7), rgba(159, 104, 81, 0.7));
+  backdrop-filter: blur(5px);
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border-bottom: 2px solid rgb(64, 64, 64);
+}
+.header .nav .nav-item .btn {
+  background-color: transparent;
+  color: #FFE5C0;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.header .nav .nav-item .btn:hover {
+  background-color: #FFAA53;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  border: 1px solid #FF7600;
+}
+.header .dropdown-menu {
+  background-color: #FFE5C0;
+  border: 1px solid #FFAA53;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+.header .dropdown-menu .dropdown-item {
+  color: #B47156;
+  transition: all 0.3s ease;
+}
+.header .dropdown-menu .dropdown-item:hover {
+  background-color: #FFAA53;
+  color: white;
+}
+.header .btn-outline-dark {
+  color: #FFE5C0;
+  border: 1px solid #FFAA53;
+  transition: all 0.3s ease;
+}
+.header .btn-outline-dark:hover {
+  background-color: #FFAA53;
+  color: white;
+}
+.header .badge {
+  background-color: #ff7600;
+}
+.header .vl {
+  color: #FF7600;
+  font-weight: bold;
+  text-transform: uppercase;
+  -webkit-text-stroke: 1px rgb(0, 0, 0);
+}
+.header .btn-cart {
+  color: #FFE5C0;
+}
+.header .btn-cart:hover {
+  background-color: #FFAA53;
+  color: white;
 }
 
 /*# sourceMappingURL=Header.css.map */

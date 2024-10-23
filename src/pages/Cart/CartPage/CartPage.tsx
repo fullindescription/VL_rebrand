@@ -1,9 +1,10 @@
 import React from 'react';
 import {Button} from 'react-bootstrap';
-import {useCart} from './CartContext.tsx';
+import {useCart} from '../CartContext.tsx';
 import {format, parse} from 'date-fns';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import './CartPage.scss'
 
 const formatSessionTime = (time: string) => {
     const parsedTime = parse(time, 'HH:mm:ss', new Date());
@@ -72,10 +73,10 @@ const CartPage: React.FC = () => {
     }, {});
 
     return (
-        <div className="container">
-            <div className="row justify-content-center align-items-center vh-100">
-                <div className="col-md-8 col-lg-6 p-4 shadow-lg rounded-3 bg-white overflow-hidden">
-                    <h2 className="mb-4 text-center text-dark">Корзина</h2>
+        <div className="container cart-page">
+            <div className="row justify-content-center align-items-center vh-100 ">
+                <div className="col-md-8 col-lg-6 p-4 shadow-lg rounded-3 bg-white overflow-hidden cart-container ">
+                    <h2 className="mb-4 text-center ">Корзина</h2>
                     {Object.values(groupedCart).length > 0 ? (
                         <>
                             <div

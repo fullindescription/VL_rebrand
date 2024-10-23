@@ -1,0 +1,71 @@
+$primary-color: #FF7600;
+$primary-light: #FFAA53;
+$primary-lighter: #FFCC8A;
+$primary-lightest: #FFE5C0;
+
+$secondary-color: #B47156;
+$secondary-light: #C69278;
+$secondary-lighter: #D8A593;
+$secondary-lightest: #EDD5C8;
+
+
+.login {
+  .card {
+    background-color: $primary-lightest;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+  }
+
+  h2 {
+    color: $primary-color;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .form-label {
+    color: $primary-color;
+  }
+
+  .form-control {
+    border: 1px solid $secondary-lighter;
+    background-color: $secondary-lightest;
+    color: $primary-color;
+
+    &:focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 5px $primary-light;
+    }
+  }
+
+  .btn-success {
+    background-color: $primary-color;
+    border: none;
+    font-size: 1.1rem;
+
+    &:hover {
+      background-color: $primary-light;
+    }
+  }
+
+  .text-danger {
+    color: #d9534f;
+  }
+
+  a {
+    color: $primary-color;
+
+    &:hover {
+      color: $primary-light;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+

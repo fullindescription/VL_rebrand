@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { format, parse } from 'date-fns';
-import { useCart } from '../../pages/Cart/CartContext.tsx';
-import SeatSelectionModal from './SeatSelectionModal.tsx';
+import { useCart } from '../../../pages/Cart/CartContext.tsx';
+import SeatSelectionModal from '../SeatSelection/SeatSelectionModal.tsx';
 import { Session } from './Session.ts';
 import { useNavigate } from 'react-router-dom';
+import './SessionDetails.scss'
 
 type SessionDetailsProps = {
     show: boolean;
@@ -151,7 +152,6 @@ const SessionDetails: React.FC<SessionDetailsProps> = ({
                     onHide={() => setShowSeatSelection(false)}
                     session={selectedSession}
                     onSeatsSelected={(selectedSeats) => {
-                        // Добавляем выбранные места в корзину
                         selectedSeats.forEach((seat) => {
                             addToCart({
                                 id: seat.sessionId,

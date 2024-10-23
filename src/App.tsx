@@ -4,11 +4,11 @@ import Header from './components/UI-Kit/Main UI/Header/Header.tsx';
 import MovieCarousel from './components/MovieCarousel/MovieCarousel';
 import { MovieList } from './components/MovieList/MovieList';
 import Footer from './components/UI-Kit/Main UI/Footer/Footer.tsx';
-import LoginPage from './pages/Profile&Register/LoginPage.tsx';
-import RegisterPage from './pages/Profile&Register/RegisterPage.tsx';
-import ProfilePage from './pages/Profile&Register/ProfilePage.tsx';
+import LoginPage from './pages/Profile&Register/Login/LoginPage.tsx';
+import RegisterPage from './pages/Profile&Register/Register/RegisterPage.tsx';
+import ProfilePage from './pages/Profile&Register/Profile/ProfilePage.tsx';
 import ScrollToTop from './components/UI-Kit/Outer UI/ScrollToTop.tsx';
-import CartPage from './pages/Cart/CartPage.tsx';
+import CartPage from './pages/Cart/CartPage/CartPage.tsx';
 import { CartProvider } from './pages/Cart/CartContext.tsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { format, addDays, parse } from 'date-fns';
@@ -120,7 +120,6 @@ const App: React.FC = () => {
     return (
         <CartProvider>
             <div className="App">
-                {!location.pathname.includes('/login') && !location.pathname.includes('/register') && (
                     <Header
                         title="VL.RU"
                         username={username}
@@ -136,7 +135,6 @@ const App: React.FC = () => {
                         currentFilter={currentFilter}
                         handleDateChange={handleDateChange}
                     />
-                )}
                 <Routes>
                     <Route path="/" element={<Navigate to="/home" />} />
                     <Route path="/register" element={<><RegisterPage setUsername={setUsername} /><Footer /></>} />

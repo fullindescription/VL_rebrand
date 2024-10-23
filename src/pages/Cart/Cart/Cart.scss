@@ -1,0 +1,105 @@
+$primary-color: #FF7600;
+$primary-light: #FFAA53;
+$primary-lighter: #FFCC8A;
+$primary-lightest: #FFE5C0;
+
+$secondary-color: #B47156;
+$secondary-light: #C69278;
+$secondary-lighter: #D8A593;
+$secondary-lightest: #EDD5C8;
+
+// Стилизация модального окна
+.modal-content {
+  background-color: $primary-lightest; // Основной фон
+  border-radius: 12px;
+  border: 1px solid $primary-lighter;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  .modal-header {
+    background-color: $primary-light; // Фон заголовка
+    color: white; // Цвет текста в заголовке
+    border-bottom: 1px solid $primary-lighter;
+    border-radius: 12px 12px 0 0;
+
+    .modal-title {
+      font-weight: bold;
+    }
+
+    .btn-close {
+      background-color: transparent;
+      border: none;
+
+      &:hover {
+        background-color: $secondary-light;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 20px;
+    background-color: $primary-lightest;
+
+    p {
+      color: $secondary-color;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        background-color: $primary-lighter;
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: $secondary-color;
+
+        strong {
+          color: $primary-color;
+        }
+
+        .btn-outline-danger {
+          color: $primary-color;
+          border: 1px solid $primary-color;
+
+          &:hover {
+            background-color: $primary-color;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+
+  .modal-footer {
+    background-color: $primary-lightest;
+    border-top: 1px solid $primary-lighter;
+    border-radius: 0 0 12px 12px;
+
+    h5 {
+      color: $primary-color;
+      font-weight: bold;
+    }
+
+    .btn-success {
+      background-color: $primary-color;
+      border: none;
+
+      &:hover {
+        background-color: $primary-light;
+      }
+    }
+
+    .btn-secondary {
+      background-color: $secondary-light;
+      border: none;
+
+      &:hover {
+        background-color: $secondary-lighter;
+      }
+    }
+  }
+}

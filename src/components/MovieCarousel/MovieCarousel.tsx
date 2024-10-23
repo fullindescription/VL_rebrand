@@ -14,6 +14,10 @@ const MovieCarousel: React.FC = () => {
                             aria-label="Slide 2"></button>
                     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
                             aria-label="Slide 3"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3"
+                            aria-label="Slide 4"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4"
+                            aria-label="Slide 5"></button>
                 </div>
                 <div className="carousel-inner">
                     <div className="carousel-item active">
@@ -21,12 +25,20 @@ const MovieCarousel: React.FC = () => {
                              style={{height: '360px', objectFit: 'cover'}} alt="Первый слайд"/>
                     </div>
                     <div className="carousel-item">
-                        <img src="/images/1.jpg" className="d-block w-100 img-fluid rounded"
-                             style={{height: '360px', objectFit: 'cover'}} alt="Первый слайд"/>
+                        <img src="/images/2.jpg" className="d-block w-100 img-fluid rounded"
+                             style={{height: '360px', objectFit: 'cover'}} alt="Второй слайд"/>
                     </div>
                     <div className="carousel-item">
-                        <img src="/images/1.jpg" className="d-block w-100 img-fluid rounded"
-                             style={{height: '360px', objectFit: 'cover'}} alt="Первый слайд"/>
+                        <img src="/images/3.jpg" className="d-block w-100 img-fluid rounded"
+                             style={{height: '360px', objectFit: 'cover'}} alt="Третий слайд"/>
+                    </div>
+                    <div className="carousel-item">
+                        <img src="/images/4.jpg" className="d-block w-100 img-fluid rounded"
+                             style={{height: '360px', objectFit: 'cover'}} alt="Четвёртый слайд"/>
+                    </div>
+                    <div className="carousel-item">
+                        <img src="/images/5.jpg" className="d-block w-100 img-fluid rounded"
+                             style={{height: '360px', objectFit: 'cover'}} alt="Пятый слайд"/>
                     </div>
                 </div>
                 <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"

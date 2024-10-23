@@ -2,8 +2,9 @@
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  background-color: #261d1d;
-  border-radius: 32px;
+  background-color: #3a3a3a;
+  border-radius: 16px;
+  border: 1px solid #444;
 }
 .home-card .container {
   transition: transform 0.3s ease-in-out;
@@ -24,15 +25,16 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+  border-radius: 0 16px 16px 0;
 }
 .home-card .card-title {
   font-size: 24px;
   font-weight: bold;
-  color: white;
+  color: #fff;
 }
 .home-card .card-category {
   font-size: 16px;
-  color: #b0b0b0;
+  color: #c1c1c1;
 }
 .home-card .card-duration {
   font-size: 14px;
@@ -47,34 +49,75 @@
   width: 100px;
   height: 120px;
   border-radius: 8.25px;
-  background-color: #333;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  transition: transform 0.3s ease-in-out;
 }
 .home-card .session-tile-small:hover {
   transform: scale(1.05);
 }
 .home-card .session-time {
   font-size: 20px;
-  color: white;
+  color: #fff;
 }
 .home-card .session-price,
 .home-card .session-seats {
   font-size: 14px;
-  color: #b0b0b0;
+  color: #c1c1c1;
 }
 .home-card .session-more {
   font-size: 16px;
-  color: white;
+  color: #fff;
 }
 .home-card .sessionN {
   width: 90%;
+  background-color: #444;
 }
 .home-card .sessionN:hover {
   transform: scale(1.05);
   transition: transform 0.3s ease-in-out;
+}
+
+.genre-select-container .genre-select-dropdown .genre-select__control {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: none;
+}
+.genre-select-container .genre-select-dropdown .genre-select__control:hover {
+  border-color: #B47156;
+}
+.genre-select-container .genre-select-dropdown .genre-select__menu {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.genre-select-container .genre-select-dropdown .genre-select__option {
+  color: #333;
+}
+.genre-select-container .genre-select-dropdown .genre-select__option:hover {
+  background-color: #FFAA53;
+  color: white;
+}
+.genre-select-container .genre-select-dropdown .genre-select__multi-value {
+  background-color: #FFAA53;
+  border-radius: 5px;
+}
+.genre-select-container .genre-select-dropdown .genre-select__multi-value .genre-select__multi-value__label {
+  color: white;
+}
+.genre-select-container .genre-select-dropdown .genre-select__multi-value .genre-select__multi-value__remove {
+  color: white;
+}
+.genre-select-container .genre-select-dropdown .genre-select__multi-value .genre-select__multi-value__remove:hover {
+  background-color: #FF7600;
+  color: white;
+}
+.genre-select-container .genre-select-label {
+  color: #fff;
 }
 
 /*# sourceMappingURL=HomeList.css.map */

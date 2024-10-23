@@ -1,10 +1,10 @@
 .premiere-card {
-  // Стиль карточки фильма
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  background-color: #261d1d;
-  border-radius: 32px;
+  background-color: #3a3a3a;
+  border-radius: 16px;
+  border: 1px solid #444;
 
   .container {
     transition: transform 0.3s ease-in-out; // Плавная анимация

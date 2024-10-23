@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './Login.scss';
 
 type LoginPageProps = {
     setUsername: (username: string) => void;
@@ -16,24 +17,16 @@ const LoginPage: React.FC<LoginPageProps> = ({ setUsername }) => {
     useEffect(() => {
         const storedUsername = localStorage.getItem('username');
         const token = localStorage.getItem('access');
-
         if (storedUsername && token) {
+            // Если пользователь уже вошел, перенаправляем на главную или другую защищённую страницу
             navigate('/home');
         }
-
-        // Если пользователь пришел после регистрации, заполняем имя пользователя
-        const lastUsername = localStorage.getItem('lastUsername');
-
-        // Проверка на наличие имени пользователя в localStorage
-        if (lastUsername) {
-            setLocalUsername(lastUsername); // Заполняем поле на странице логина
-        }
     }, [navigate]);
-
 
     // Функция для логина
     const handleLogin = async () => {
         try {
+            // Шаг 1: POST-запрос для аутентификации
             const loginResponse = await fetch('/api/users/login/', {
                 method: 'POST',
                 headers: {
@@ -85,7 +78,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setUsername }) => {
     };
 
     return (
-        <div className="container">
+        <div className="container login">
             <div className="row justify-content-center align-items-center vh-100">
                 <div className="col-md-6 col-lg-4">
                     <div className="card p-4">
@@ -99,6 +92,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setUsername }) => {
                                     className="form-control"
                                     value={username}
                                     onChange={(e) => setLocalUsername(e.target.value)}
+                                    placeholder="Введите имя пользователя"
                                 />
                             </div>
                             <div className="mb-3">
@@ -109,6 +103,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setUsername }) => {
                                     className="form-control"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="Введите пароль"
                                 />
                             </div>
                             <button type="button" className="btn btn-success w-100" onClick={handleLogin}>

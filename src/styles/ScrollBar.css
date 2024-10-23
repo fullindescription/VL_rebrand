@@ -1,0 +1,28 @@
+* ::-webkit-scrollbar {
+  width: 12px;
+  border-radius: 20px;
+}
+* ::-webkit-scrollbar-track {
+  background: #FFE5C0;
+  border-radius: 20px;
+}
+* ::-webkit-scrollbar-thumb {
+  background-color: #FF7600;
+  border-radius: 20px;
+  border: 3px solid #FFE5C0;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+* ::-webkit-scrollbar-thumb:hover {
+  background-color: #FFAA53;
+  transform: scale(1.1);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #FF7600 #FFE5C0;
+}
+*:hover {
+  scrollbar-color: #FFAA53 #FFE5C0;
+}
+
+/*# sourceMappingURL=ScrollBar.css.map */

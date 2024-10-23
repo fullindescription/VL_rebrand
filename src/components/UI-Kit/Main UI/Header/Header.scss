@@ -1,4 +1,85 @@
-.dropdown-item:hover {
-  background-color: #000 !important; /* Черный фон */
-  color: #fff !important; /* Белый текст */
+$primary-color: #FF7600;
+$primary-light: #FFAA53;
+$primary-lighter: #FFCC8A;
+$primary-lightest: #FFE5C0;
+
+$secondary-color: #B47156;
+$secondary-light: #C69278;
+$secondary-lighter: #D8A593;
+$secondary-lightest: #EDD5C8;
+
+.header {
+  background: linear-gradient(135deg, rgba(207, 106, 22, 0.7), rgba(159, 104, 81, 0.7)); // Добавляем красивый градиент
+  backdrop-filter: blur(5px);
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); // Тень для выделения
+  border-bottom: 2px solid rgba(64, 64, 64, 1);
+  .nav {
+    .nav-item {
+      .btn {
+        background-color: transparent;
+        color: $primary-lightest;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        border-radius: 4px;
+
+        &:hover {
+          background-color: $primary-light;
+          color: white;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); // Добавим небольшой эффект тени при наведении
+          border: 1px solid $primary-color;
+        }
+      }
+    }
+  }
+
+  .dropdown-menu {
+    background-color: $primary-lightest;
+    border: 1px solid $primary-light;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Добавляем тень для выпадающего меню
+    border-radius: 5px;
+
+    .dropdown-item {
+      color: $secondary-color;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: $primary-light;
+        color: white;
+      }
+    }
+  }
+
+  .btn-outline-dark {
+    color: $primary-lightest;
+    border: 1px solid $primary-light;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: $primary-light;
+      color: white;
+    }
+  }
+
+  .badge {
+    background-color: #ff7600;
+  }
+
+  .vl {
+    color: $primary-color;
+    font-weight: bold;
+    text-transform: uppercase;
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 1);
+  }
+
+  .btn-cart {
+    color: $primary-lightest;
+    &:hover {
+      background-color: $primary-light;
+      color: white;
+    }
+  }
 }

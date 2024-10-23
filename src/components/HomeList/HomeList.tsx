@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { format, parse } from 'date-fns';
 import './HomeList.scss';
-import SessionDetails from '../Session/SessionDetails.tsx';
+import SessionDetails from '../Session&SeatSelection/Session/SessionDetails.tsx';
 import HomeModal from './HomeModal.tsx'; // Импортируем модальное окно для фильмов и событий
 
 type EventOrMovie = {
@@ -47,10 +47,17 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
     };
 
     const handleAllSessionsClick = (sessions: any[], title: string) => {
-        setAllSessions(sessions);
-        console.log("Title:", title); // Или используйте `title` в логике
-        setShowHomeModal(true);
+        const allSessionsWithTitle = sessions.map((session) => ({
+            ...session,
+            title: title,
+        }));
+
+        setAllSessions(allSessionsWithTitle);
+        setSelectedSession(null); // Убираем выделение одной сессии
+        setShowHomeModal(false); // Закрываем описание, если оно открыто
+        setShowSessionDetails(true); // Открываем окно выбора мест для всех сессий
     };
+
 
 
     // Закрытие модального окна для описания
@@ -170,11 +177,8 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
             <div className="row row-cols-1 row-cols-md-2 g-4">
                 {filteredItemsWithSessions.length > 0 ? (
                     filteredItemsWithSessions.map((item, index) => (
-                        <div key={`${item.id}-${index}`}
-                             className="col"> {/* Используем item.id и индекс для уникальности */}
-                            <div
-                                className="container card bg-dark text-white w-100 h-100 d-flex flex-row home-card p-3">
-                                {/* Клик на изображение для открытия модального окна с описанием */}
+                        <div key={`${item.id}-${index}`} className="col">
+                            <div className="container card text-white w-100 h-100 d-flex flex-row home-card p-3">
                                 <div
                                     className="container position-relative me-1 image-container w-50"
                                     style={{
@@ -182,7 +186,7 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                         backgroundSize: 'cover',
                                         backgroundPosition: 'center',
                                     }}
-                                    onClick={() => handleItemClick(item)} // Клик для показа описания
+                                    onClick={() => handleItemClick(item)}
                                 >
                                     <button
                                         className="btn btn-play position-absolute top-50 start-50 translate-middle"
@@ -193,11 +197,11 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                             fontSize: '50px',
                                             color: '#fff',
                                             transition: 'transform 0.3s ease, color 0.3s ease',
-                                            cursor: 'pointer'
+                                            cursor: 'pointer',
                                         }}
                                         onMouseEnter={(e) => {
                                             e.currentTarget.style.transform = 'scale(1.2)';
-                                            e.currentTarget.style.color = '#ffcc00'; // Изменение цвета при наведении
+                                            e.currentTarget.style.color = '#ffcc00';
                                         }}
                                         onMouseLeave={(e) => {
                                             e.currentTarget.style.transform = 'scale(1)';
@@ -207,16 +211,17 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                         <i className="bi bi-play-circle"></i>
                                     </button>
 
-                                    <div
-                                        className="position-absolute top-0 start-0 m-2 p-1 bg-danger text-white rounded w-auto h-auto">
+                                    <div className="position-absolute top-0 start-0 m-2 p-1 bg-danger text-white rounded w-auto h-auto">
                                         {item.age_restriction}
                                     </div>
                                 </div>
+
                                 <div className="card-body d-flex flex-column">
                                     <div className="container w-auto">
                                         <h3 className="card-title mb-1">{item.title}</h3>
                                         <p className="card-category mt-3">{item.category_name}</p>
                                     </div>
+
                                     <div className="container d-flex flex-wrap gap-2 mt-1">
                                         {item.sessions.slice(0, 1).map((session) => (
                                             <div
@@ -230,7 +235,9 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                                                 <p className="session-price text-muted">
                                                     <strong>{session.price} ₽</strong>
                                                 </p>
-                                                <p className="session-seats text-muted"><strong>Комфорт</strong></p>
+                                                <p className="session-seats text-muted">
+                                                    <strong>Комфорт</strong>
+                                                </p>
                                             </div>
                                         ))}
                                         {item.sessions.length > 1 && (
@@ -253,7 +260,6 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                 )}
             </div>
 
-
             {/* Модальное окно для выбора мест (SessionDetails) */}
             <SessionDetails
                 show={showSessionDetails}
@@ -261,7 +267,7 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                 allSessions={allSessions}
                 selectedSession={selectedSession}
                 setSelectedSession={setSelectedSession}
-                isEvent={false} // Индикатор для событий
+                isEvent={false}
             />
 
             {/* Модальное окно для описания (HomeModal) */}
@@ -269,10 +275,10 @@ const HomeList: React.FC<HomeListProps> = ({ selectedDate, currentView }) => {
                 show={showHomeModal}
                 onHide={closeHomeModal}
                 item={selectedItem}
-                sessions={allSessions} // Передаем все сеансы в модальное окно
+                sessions={allSessions}
                 onSelectSession={(session) => {
                     setSelectedSession(session);
-                    setShowSessionDetails(true); // Открываем модальное окно выбора мест
+                    setShowSessionDetails(true);
                 }}
             />
         </section>

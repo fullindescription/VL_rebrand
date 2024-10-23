@@ -1,0 +1,43 @@
+.register .card {
+  background-color: rgb(255, 229, 192);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+.register h2 {
+  color: rgb(255, 118, 0);
+  text-align: center;
+  font-weight: bold;
+}
+.register .form-label {
+  color: rgb(255, 118, 0);
+  font-weight: 600;
+}
+.register .form-control {
+  border: 1px solid #D8A593;
+  background-color: #EDD5C8;
+  color: rgb(255, 118, 0);
+}
+.register .form-control:focus {
+  border-color: rgb(255, 118, 0);
+  box-shadow: 0 0 5px rgb(255, 170, 83);
+}
+.register .btn-danger {
+  background-color: rgb(255, 118, 0);
+  border: none;
+  font-size: 1.1rem;
+}
+.register .btn-danger:hover {
+  background-color: rgb(255, 170, 83);
+}
+.register .text-danger {
+  color: #d9534f;
+}
+.register a {
+  color: rgb(255, 118, 0);
+}
+.register a:hover {
+  color: rgb(255, 170, 83);
+}
+
+/*# sourceMappingURL=Register.css.map */

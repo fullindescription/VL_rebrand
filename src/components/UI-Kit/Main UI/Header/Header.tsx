@@ -85,16 +85,7 @@ const Header: React.FC<HeaderProps> = ({
     }, [showCalendar]);
 
     return (
-        <header
-            className="text-white"
-            style={{
-                backgroundColor: 'rgba(180, 113, 86, 0.9)', // Используем цвет $secondary-color
-                position: 'fixed',
-                width: '100%',
-                zIndex: 1000,
-                backdropFilter: 'blur(5px)',
-            }}
-        >
+        <header className="header container-fluid">
             <div className="container">
                 <div className="d-flex justify-content-between align-items-center p-1">
                     <div className="d-flex align-items-center">
@@ -104,10 +95,10 @@ const Header: React.FC<HeaderProps> = ({
                             onClick={() => {
                                 setCurrentView('Афиша');
                                 setCurrentFilter('home');
-                                updateViewTitle(selectedDateString, 'home'); // Обновляем заголовок при клике
+                                updateViewTitle(selectedDateString, 'home');
                             }}
                         >
-                            <h1 className="m-1">{title}</h1>
+                            <h1 className="vl m-1">{title}</h1>
                         </Link>
                     </div>
                     <nav className="d-none d-md-flex">
@@ -116,10 +107,9 @@ const Header: React.FC<HeaderProps> = ({
                                 <button
                                     onClick={() => {
                                         handleTodayClick();
-                                        window.location.reload(); // Перезагрузка страницы после нажатия "Сегодня"
+                                        window.location.reload();
                                     }}
                                     className="btn btn-outline"
-                                    style={{color: '#F9E2D8'}}
                                 >
                                     Сегодня
                                 </button>
@@ -128,26 +118,23 @@ const Header: React.FC<HeaderProps> = ({
                                 <button
                                     onClick={() => {
                                         handleTomorrowClick();
-                                        window.location.reload(); // Перезагрузка страницы после нажатия "Завтра"
+                                        window.location.reload();
                                     }}
                                     className="btn btn-outline"
-                                    style={{color: '#F9E2D8'}}
                                 >
                                     Завтра
                                 </button>
                             </li>
-
                             <li className="nav-item">
                                 <button
                                     onClick={() => {
                                         setCurrentView('Премьеры');
                                         setCurrentFilter('premiere');
-                                        updateViewTitle(selectedDateString, 'premiere'); // Обновляем заголовок при клике
+                                        updateViewTitle(selectedDateString, 'premiere');
                                         navigate('/premiere');
                                         window.location.reload();
                                     }}
-                                    className="btn btn "
-                                    style={{ color: '#F9E2D8' }}
+                                    className="btn btn-outline"
                                 >
                                     Премьера
                                 </button>
@@ -157,12 +144,11 @@ const Header: React.FC<HeaderProps> = ({
                                     onClick={() => {
                                         setCurrentView('События');
                                         setCurrentFilter('events');
-                                        updateViewTitle(selectedDateString, 'events'); // Обновляем заголовок при клике
+                                        updateViewTitle(selectedDateString, 'events');
                                         navigate('/events');
                                         window.location.reload();
                                     }}
                                     className="btn btn-outline"
-                                    style={{ color: '#F9E2D8' }}
                                 >
                                     События
                                 </button>
@@ -172,12 +158,11 @@ const Header: React.FC<HeaderProps> = ({
                                     onClick={() => {
                                         setCurrentView('Фильмы');
                                         setCurrentFilter('movies');
-                                        updateViewTitle(selectedDateString, 'movies'); // Обновляем заголовок при клике
+                                        updateViewTitle(selectedDateString, 'movies');
                                         navigate('/movies');
                                         window.location.reload();
                                     }}
                                     className="btn btn-outline"
-                                    style={{ color: '#F9E2D8' }}
                                 >
                                     Фильмы
                                 </button>
@@ -187,23 +172,22 @@ const Header: React.FC<HeaderProps> = ({
 
                     <div className="d-flex align-items-center">
                         {/* Dropdown Menu */}
-                        <div className="dropdown me-3 ">
+                        <div className="dropdown me-3">
                             <button
                                 className="btn btn-outline-dark dropdown-toggle"
                                 type="button"
                                 id="dropdownMenuButton1"
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false"
-                                style={{ color: '#F9E2D8', borderColor: '#F9E2D8' }}
                             >
                                 Меню
                             </button>
-                            <ul className="dropdown-menu " aria-labelledby="dropdownMenuButton1">
+                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
                                     <button
                                         onClick={() => {
                                             handleTodayClick();
-                                            window.location.reload(); // Перезагрузка страницы после нажатия "Сегодня"
+                                            window.location.reload();
                                         }}
                                         className="dropdown-item"
                                     >
@@ -214,14 +198,13 @@ const Header: React.FC<HeaderProps> = ({
                                     <button
                                         onClick={() => {
                                             handleTomorrowClick();
-                                            window.location.reload(); // Перезагрузка страницы после нажатия "Завтра"
+                                            window.location.reload();
                                         }}
                                         className="dropdown-item"
                                     >
-                                    Завтра
+                                        Завтра
                                     </button>
                                 </li>
-
                                 <li>
                                     <button
                                         onClick={() => {
@@ -229,7 +212,7 @@ const Header: React.FC<HeaderProps> = ({
                                             setCurrentFilter('premiere');
                                             navigate('/premiere');
                                             updateViewTitle(selectedDateString, 'premiere');
-                                            window.location.reload();// Обновляем заголовок при клике
+                                            window.location.reload();
                                         }}
                                         className="dropdown-item"
                                     >
@@ -243,7 +226,7 @@ const Header: React.FC<HeaderProps> = ({
                                             setCurrentFilter('events');
                                             navigate('/events');
                                             updateViewTitle(selectedDateString, 'events');
-                                            window.location.reload();// Обновляем заголовок при клике
+                                            window.location.reload();
                                         }}
                                         className="dropdown-item"
                                     >
@@ -257,7 +240,7 @@ const Header: React.FC<HeaderProps> = ({
                                             setCurrentFilter('movies');
                                             navigate('/movies');
                                             updateViewTitle(selectedDateString, 'movies');
-                                            window.location.reload();// Обновляем заголовок при клике
+                                            window.location.reload();
                                         }}
                                         className="dropdown-item"
                                     >
@@ -285,7 +268,6 @@ const Header: React.FC<HeaderProps> = ({
                             <button
                                 onClick={toggleCalendar}
                                 className="btn btn-outline-dark d-flex align-items-center me-3"
-                                style={{ color: '#F9E2D8', borderColor: '#F9E2D8' }}
                             >
                                 <i className="bi bi-calendar3"></i>
                             </button>
@@ -297,7 +279,6 @@ const Header: React.FC<HeaderProps> = ({
                                 <Link
                                     to="/profile"
                                     className="btn btn-outline-dark d-flex align-items-center me-3"
-                                    style={{ color: '#F9E2D8', borderColor: '#F9E2D8' }}
                                 >
                                     <i className="bi bi-person-circle"></i>
                                 </Link>
@@ -306,7 +287,6 @@ const Header: React.FC<HeaderProps> = ({
                             <Link
                                 to="/login"
                                 className="btn btn-outline-dark d-flex align-items-center me-3"
-                                style={{ color: '#F9E2D8', borderColor: '#F9E2D8' }}
                             >
                                 <i className="bi bi-person-circle"></i>
                             </Link>
@@ -316,16 +296,12 @@ const Header: React.FC<HeaderProps> = ({
                         <button
                             className="btn btn-outline-dark d-flex align-items-center position-relative"
                             onClick={() => navigate('/cart')}
-                            style={{ color: '#F9E2D8', borderColor: '#F9E2D8' }}
                         >
                             <i className="bi bi-cart3"></i>
                             {cart.length > 0 && (
-                                <span
-                                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                    style={{ fontSize: '0.75rem' }}
-                                >
-                                    {cart.length}
-                                </span>
+                                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {cart.length}
+                            </span>
                             )}
                         </button>
                     </div>

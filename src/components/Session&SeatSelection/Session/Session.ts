@@ -1,4 +1,4 @@
-// Session.ts
+// Session&SeatSelection.ts
 export type Session = {
     id: number;
     title: string; // Добавляем название фильма

@@ -1,0 +1,95 @@
+$primary-color: #FF7600;
+$primary-light: #FFAA53;
+$primary-lighter: #FFCC8A;
+$primary-lightest: #FFE5C0;
+
+$secondary-color: #B47156;
+$secondary-light: #C69278;
+$secondary-lighter: #D8A593;
+$secondary-lightest: #EDD5C8;
+
+.modal-content {
+  background-color: $primary-lightest; // Светлый фон для модального окна
+  border-radius: 12px;
+  border: 1px solid $primary-lighter;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  background-color: $primary-light; // Фон заголовка
+  color: white; // Текст в заголовке
+  border-bottom: 1px solid $primary-lighter;
+  border-radius: 12px 12px 0 0;
+
+  .modal-title {
+    font-weight: bold;
+  }
+
+  .btn-close {
+    background-color: transparent;
+    border: none;
+
+    &:hover {
+      background-color: $secondary-light;
+    }
+  }
+}
+
+.modal-body {
+  padding: 20px;
+  background-color: $primary-lightest;
+
+  h5 {
+    color: $primary-color;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .d-flex {
+    background-color: $secondary-lightest;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid $secondary-lighter;
+
+    strong {
+      color: $primary-color;
+    }
+
+    button {
+      background-color: $primary-color;
+      border: none;
+      color: white;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: $primary-light;
+      }
+    }
+  }
+}
+
+.modal-footer {
+  background-color: $primary-lightest;
+  border-top: 1px solid $primary-lighter;
+  border-radius: 0 0 12px 12px;
+
+  .btn-secondary {
+    background-color: $secondary-light;
+    border: none;
+
+    &:hover {
+      background-color: $secondary-lighter;
+    }
+  }
+
+  .btn-primary {
+    background-color: $primary-color;
+    border: none;
+
+    &:hover {
+      background-color: $primary-light;
+    }
+  }
+}
