@@ -4,7 +4,7 @@ COPY ./VL_rebrand ./app
 
 RUN python3 -m pip install -r /app/requirements.txt
 
-RUN export $(grep -v '^#' .env | xargs)
+RUN export $(grep -v '^#' /app/.env | xargs)
 
 ENTRYPOINT [ "python3", "/app/manage.py", "runserver", "0.0.0.0:8000", "--noreload" ]
 
