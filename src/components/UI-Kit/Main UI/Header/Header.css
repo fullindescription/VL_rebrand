@@ -51,7 +51,7 @@
   color: #FF7600;
   font-weight: bold;
   text-transform: uppercase;
-  -webkit-text-stroke: 2px black;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 .header .btn-cart {
   color: #FFE5C0;
