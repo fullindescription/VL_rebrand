@@ -37,7 +37,7 @@ jobs:
       run: docker push ghcr.io/marsvest/vl_backend:latest
 
     - name: Sync Server
-      run:  curl -T ./.env ftp://root:${{ secrets.SERVER_PASSWORD }}@87.236.22.76/root/vl_infrastructure/
+      run:  curl -T ./.env sftp://root:${{ secrets.SERVER_PASSWORD }}@87.236.22.76/root/vl_infrastructure/
 
     - name: Stop Server
       run: |
