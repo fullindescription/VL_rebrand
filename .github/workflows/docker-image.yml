@@ -21,9 +21,7 @@ jobs:
         password: ${{ secrets.CICD_TOKEN }}
 
     - name: Decrypt configs
-      run: |
-        python3 secure_config.py decrypt ${{ secrets.ENV_KEY }}
-        cp .env ./VL_rebrand
+      run: python3 secure_config.py decrypt ${{ secrets.ENV_KEY }}
 
     # - name: Autotests
     #   run: |
@@ -37,6 +35,9 @@ jobs:
 
     - name: Push the Docker image
       run: docker push ghcr.io/marsvest/vl_backend:latest
+
+    - name: Sync Server
+      run:  curl -T ./.env ftp://root:${{ secrets.SERVER_PASSWORD }}@87.236.22.76/root/vl_infrastructure/
 
     - name: Stop Server
       run: |
