@@ -37,15 +37,10 @@ jobs:
     #   run: docker push ghcr.io/marsvest/vl_backend:latest
 
     - name: Sync Server
-      run:  curl -k -T ./.env sftp://root:${{ secrets.SERVER_PASSWORD }}@87.236.22.76/
+      run: curl -k -T ./.env sftp://root:${{ secrets.SERVER_PASSWORD }}@87.236.22.76/root/vl_infrastructure
 
     - name: Stop Server
-      run: |
-        sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no -T root@87.236.22.76 docker compose -f vl_infrastructure/docker-compose.yml down
-        sleep 10
+      run: sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no -T root@87.236.22.76 bash vl_infrastructure/service_control.sh stop
 
     - name: Run new version
-      run: | 
-        sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no -T root@87.236.22.76 export $(grep -v '^#' .env | xargs)
-        sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no -T root@87.236.22.76 docker compose -f vl_infrastructure/docker-compose.yml up --pull always -d
-      
+      run: sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no -T root@87.236.22.76 bash vl_infrastructure/service_control.sh start
