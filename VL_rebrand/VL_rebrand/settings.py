@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,10 +83,21 @@ WSGI_APPLICATION = 'VL_rebrand.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'vl_rebrand',                   # Имя вашей базы данных
+        'USER': 'remote_user',                  # Имя пользователя базы данных
+        'PASSWORD': os.getenv('db_password'),   # Пароль пользователя базы данных
+        'HOST': '87.236.22.76',                 # Хост базы данных
+        'PORT': '5432',                         # Порт (по умолчанию 5432)
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 CACHES = {
     'default': {
