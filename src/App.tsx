@@ -24,10 +24,10 @@ const App: React.FC = () => {
 
     const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
     const initialDate = localStorage.getItem('selectedDate') || format(new Date(), 'yyyy-MM-dd');
-    const initialFilter = localStorage.getItem('currentFilter') || 'home'; // Восстанавливаем фильтр из localStorage
+    const initialFilter = localStorage.getItem('currentFilter') || 'home';
     const [selectedDate, setSelectedDate] = useState<string>(initialDate);
     const [currentView, setCurrentView] = useState<string>('');
-    const [currentFilter, setCurrentFilter] = useState<string>(initialFilter); // Используем сохранённый фильтр
+    const [currentFilter, setCurrentFilter] = useState<string>(initialFilter);
     const [movieData, setMovieData] = useState<Movie[]>([]);
 
     // Обновляем заголовок в зависимости от выбранной даты и фильтра
@@ -59,7 +59,7 @@ const App: React.FC = () => {
                 setCurrentView(`Фильмы на ${formattedDate}`);
             }
         } else if (filter === 'premiere') {
-            setCurrentView('Премьера'); // Фиксированный заголовок для премьеры
+            setCurrentView('Премьера');
         } else {
             setCurrentView(`Афиша на ${formattedDate}`);
         }
@@ -67,7 +67,7 @@ const App: React.FC = () => {
 
     // Сохраняем текущий фильтр в localStorage
     useEffect(() => {
-        localStorage.setItem('currentFilter', currentFilter); // Сохраняем текущий фильтр
+        localStorage.setItem('currentFilter', currentFilter);
     }, [currentFilter]);
 
     // Сохраняем выбранную дату в localStorage
@@ -79,6 +79,21 @@ const App: React.FC = () => {
     useEffect(() => {
         updateViewTitle(selectedDate, currentFilter);
     }, [location.pathname, selectedDate, currentFilter]);
+
+    // Загружаем данные о сеансах
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`/api/sessions?date=${selectedDate}&filter=${currentFilter}`);
+                const data = await response.json();
+                setMovieData(data);
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+            }
+        };
+
+        fetchData();
+    }, [selectedDate, currentFilter]);
 
     // Сохраняем username в localStorage при изменении
     useEffect(() => {
@@ -120,21 +135,21 @@ const App: React.FC = () => {
     return (
         <CartProvider>
             <div className="App">
-                    <Header
-                        title="VL.RU"
-                        username={username}
-                        setUsername={setUsername}
-                        selectedDateString={selectedDate}
-                        setSelectedDate={setSelectedDate}
-                        setCurrentView={setCurrentView}
-                        setCurrentFilter={setCurrentFilter}
-                        setMovieData={setMovieData}
-                        handleTodayClick={handleTodayClick}
-                        handleTomorrowClick={handleTomorrowClick}
-                        updateViewTitle={updateViewTitle}
-                        currentFilter={currentFilter}
-                        handleDateChange={handleDateChange}
-                    />
+                <Header
+                    title="VL.RU"
+                    username={username}
+                    setUsername={setUsername}
+                    selectedDateString={selectedDate}
+                    setSelectedDate={setSelectedDate}
+                    setCurrentView={setCurrentView}
+                    setCurrentFilter={setCurrentFilter}
+                    setMovieData={setMovieData}
+                    handleTodayClick={handleTodayClick}
+                    handleTomorrowClick={handleTomorrowClick}
+                    updateViewTitle={updateViewTitle}
+                    currentFilter={currentFilter}
+                    handleDateChange={handleDateChange}
+                />
                 <Routes>
                     <Route path="/" element={<Navigate to="/home" />} />
                     <Route path="/register" element={<><RegisterPage setUsername={setUsername} /><Footer /></>} />
