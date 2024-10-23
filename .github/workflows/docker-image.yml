@@ -23,7 +23,8 @@ jobs:
     - name: Decrypt configs
       run: |
         python3 secure_config.py decrypt ${{ secrets.ENV_KEY }}
-        cp ./.env ./VL_rebrand/.env
+        cp .env ./VL_rebrand
+        ls
 
     - name: Autotests
       run: |
