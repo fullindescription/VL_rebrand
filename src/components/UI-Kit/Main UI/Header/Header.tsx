@@ -5,9 +5,10 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './customDatePicker.scss';
-import { parse, format} from 'date-fns';
+import { parse, format } from 'date-fns';
 import { useCart } from '../../../../pages/Cart/CartContext.tsx';
 import { ru } from 'date-fns/locale';
+import { Movie } from '../../../MovieList/Movie.ts';
 import './Header.scss';
 
 registerLocale('ru', ru);
@@ -20,9 +21,10 @@ type HeaderProps = {
     setSelectedDate: (date: string) => void;
     setCurrentView: (view: string) => void;
     setCurrentFilter: (filter: string) => void;
+    setMovieData: (movies: Movie[]) => void;
     handleTodayClick: () => void;
     handleTomorrowClick: () => void;
-    updateViewTitle: (date: string, filter: string) => void;
+    updateViewTitle: (date: string, filter: string) => void; // Добавляем этот проп
     currentFilter: string;
     handleDateChange: (date: Date | null) => void;
 };
@@ -37,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({
                                            handleTodayClick,
                                            handleTomorrowClick,
                                            currentFilter,
-                                           updateViewTitle,
+                                           updateViewTitle, // Принимаем updateViewTitle как проп
                                        }) => {
     const navigate = useNavigate();
     const { cart } = useCart();
@@ -57,8 +59,10 @@ const Header: React.FC<HeaderProps> = ({
             setDate(date);
             const formattedDate = format(date, 'yyyy-MM-dd');
             setSelectedDate(formattedDate);
-            updateViewTitle(formattedDate, currentFilter);
+            updateViewTitle(formattedDate, currentFilter); // Используем updateViewTitle при изменении даты
             setShowCalendar(false);
+
+            window.location.reload();
         }
     };
 
@@ -103,6 +107,7 @@ const Header: React.FC<HeaderProps> = ({
                                 <button
                                     onClick={() => {
                                         handleTodayClick();
+                                        window.location.reload();
                                     }}
                                     className="btn btn-outline"
                                 >
@@ -113,6 +118,7 @@ const Header: React.FC<HeaderProps> = ({
                                 <button
                                     onClick={() => {
                                         handleTomorrowClick();
+                                        window.location.reload();
                                     }}
                                     className="btn btn-outline"
                                 >
@@ -126,6 +132,7 @@ const Header: React.FC<HeaderProps> = ({
                                         setCurrentFilter('premiere');
                                         updateViewTitle(selectedDateString, 'premiere');
                                         navigate('/premiere');
+                                        window.location.reload();
                                     }}
                                     className="btn btn-outline"
                                 >
@@ -139,6 +146,7 @@ const Header: React.FC<HeaderProps> = ({
                                         setCurrentFilter('events');
                                         updateViewTitle(selectedDateString, 'events');
                                         navigate('/events');
+                                        window.location.reload();
                                     }}
                                     className="btn btn-outline"
                                 >
@@ -152,6 +160,7 @@ const Header: React.FC<HeaderProps> = ({
                                         setCurrentFilter('movies');
                                         updateViewTitle(selectedDateString, 'movies');
                                         navigate('/movies');
+                                        window.location.reload();
                                     }}
                                     className="btn btn-outline"
                                 >
@@ -178,6 +187,7 @@ const Header: React.FC<HeaderProps> = ({
                                     <button
                                         onClick={() => {
                                             handleTodayClick();
+                                            window.location.reload();
                                         }}
                                         className="dropdown-item"
                                     >
@@ -188,6 +198,7 @@ const Header: React.FC<HeaderProps> = ({
                                     <button
                                         onClick={() => {
                                             handleTomorrowClick();
+                                            window.location.reload();
                                         }}
                                         className="dropdown-item"
                                     >
@@ -201,6 +212,7 @@ const Header: React.FC<HeaderProps> = ({
                                             setCurrentFilter('premiere');
                                             navigate('/premiere');
                                             updateViewTitle(selectedDateString, 'premiere');
+                                            window.location.reload();
                                         }}
                                         className="dropdown-item"
                                     >
@@ -214,6 +226,7 @@ const Header: React.FC<HeaderProps> = ({
                                             setCurrentFilter('events');
                                             navigate('/events');
                                             updateViewTitle(selectedDateString, 'events');
+                                            window.location.reload();
                                         }}
                                         className="dropdown-item"
                                     >
@@ -227,6 +240,7 @@ const Header: React.FC<HeaderProps> = ({
                                             setCurrentFilter('movies');
                                             navigate('/movies');
                                             updateViewTitle(selectedDateString, 'movies');
+                                            window.location.reload();
                                         }}
                                         className="dropdown-item"
                                     >
@@ -295,13 +309,7 @@ const Header: React.FC<HeaderProps> = ({
 
                 {showCalendar && (
                     <div className="calendar-container p-3" ref={calendarRef}>
-                        <DatePicker
-                            selected={selectedDate}
-                            onChange={handleDateChange}
-                            inline
-                            dropdownMode="select"
-                            locale="ru"
-                        />
+                        <DatePicker selected={selectedDate} onChange={handleDateChange} inline dropdownMode="select" locale="ru" />
                     </div>
                 )}
             </div>
