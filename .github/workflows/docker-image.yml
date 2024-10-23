@@ -30,11 +30,11 @@ jobs:
     #     python3 -m pip install -r requirements.txt
     #     python3 manage.py test
 
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghcr.io/marsvest/vl_backend:latest
+    # - name: Build the Docker image
+    #   run: docker build . --file Dockerfile --tag ghcr.io/marsvest/vl_backend:latest
 
-    - name: Push the Docker image
-      run: docker push ghcr.io/marsvest/vl_backend:latest
+    # - name: Push the Docker image
+    #   run: docker push ghcr.io/marsvest/vl_backend:latest
 
     - name: Sync Server
       run:  curl -k -T ./.env sftp://root:${{ secrets.SERVER_PASSWORD }}@87.236.22.76/root/vl_infrastructure/
@@ -45,5 +45,7 @@ jobs:
         sleep 10
 
     - name: Run new version
-      run: sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no -T root@87.236.22.76 docker compose -f vl_infrastructure/docker-compose.yml up --pull always -d
+      run: | 
+        sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no -T root@87.236.22.76 export $(grep -v '^#' vl_infrastructure/.env | xargs)
+        sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no -T root@87.236.22.76 docker compose -f vl_infrastructure/docker-compose.yml up --pull always -d
       
