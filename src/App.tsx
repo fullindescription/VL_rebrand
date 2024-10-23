@@ -143,7 +143,6 @@ const App: React.FC = () => {
                     setSelectedDate={setSelectedDate}
                     setCurrentView={setCurrentView}
                     setCurrentFilter={setCurrentFilter}
-                    setMovieData={setMovieData}
                     handleTodayClick={handleTodayClick}
                     handleTomorrowClick={handleTomorrowClick}
                     updateViewTitle={updateViewTitle}
