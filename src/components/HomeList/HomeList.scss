@@ -38,17 +38,17 @@
   .card-title {
     font-size: 24px;
     font-weight: bold;
-    color: #fff; // Яркий белый цвет для заголовка
+    color: white;
   }
 
   .card-category {
     font-size: 16px;
-    color: #c1c1c1; // Светло-серый для категории
+    color: #b0b0b0;
   }
 
   .card-duration {
     font-size: 14px;
-    color: #999999; // Бледный цвет для длительности
+    color: #999999;
   }
 
   .sessions {
@@ -61,7 +61,6 @@
     width: 100px;
     height: 120px;
     border-radius: 8.25px;
-     // Тёмно-серый фон для сессий
     display: flex;
     flex-direction: column;
     align-items: center;
