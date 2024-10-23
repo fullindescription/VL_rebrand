@@ -24,7 +24,7 @@ jobs:
       run: |
         python3 secure_config.py decrypt ${{ secrets.ENV_KEY }}
         cp .env ./VL_rebrand
-        ls -a
+        export $(grep -v '^#' .env | xargs)
 
     - name: Autotests
       run: |

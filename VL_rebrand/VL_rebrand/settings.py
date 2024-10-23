@@ -86,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'vl_rebrand',                   # Имя вашей базы данных
         'USER': 'remote_user',                  # Имя пользователя базы данных
-        'PASSWORD': os.getenv('db_password'),   # Пароль пользователя базы данных
+        'PASSWORD': os.getenv('DB_PASS'),   # Пароль пользователя базы данных
         'HOST': '87.236.22.76',                 # Хост базы данных
         'PORT': '5432',                         # Порт (по умолчанию 5432)
     }
