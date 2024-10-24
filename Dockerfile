@@ -16,7 +16,7 @@ FROM nginx:latest
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
-COPY --from=build /app/fitd-team.ru /etc/letsencrypt/live/
+COPY --from=build /app/fitd-team.ru /etc/letsencrypt/live/fitd-team.ru
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
