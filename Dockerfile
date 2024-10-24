@@ -23,3 +23,4 @@ COPY ./nginx.conf /etc/nginx/nginx.conf
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
 
 EXPOSE 80
+EXPOSE 443
